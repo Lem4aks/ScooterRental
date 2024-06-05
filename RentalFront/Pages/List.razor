@@ -1,0 +1,33 @@
+﻿@page "/list"
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient HttpClient
+
+<h3>Доступні транспортні засоби для прокату</h3>
+
+@* @if (list == null)
+{
+    <p>Завантаження...</p>
+}
+else if (list.Count == 0)
+{
+    <p>Немає доступних транспортних засобів.</p>
+}
+else
+{
+    <ul>
+        @foreach (var vehicle in list)
+        {
+            <li>
+                <h4>@vehicle.Name</h4>
+                <p>Марка: @vehicle.Brand</p>
+                <p>Модель: @vehicle.Model</p>
+                <p>Рік: @vehicle.Year</p>
+            </li>
+        }
+    </ul>
+} *@
+
+@code {
+
+}
