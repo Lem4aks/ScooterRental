@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package scooterinventory;
+
+service ScooterInventoryService {
+    rpc GetAvailableScooters (GetAvailableScootersRequest) returns (GetAvailableScootersResponse);
+}
+
+message Scooter {
+    int32 id = 1;
+    string model = 2;
+    string status = 3;
+}
+
+message GetAvailableScootersResponse {
+    repeated Scooter scooters = 1;
+}
+
+message GetAvailableScootersRequest {}

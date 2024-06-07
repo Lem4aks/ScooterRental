@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package rentalsession;
+
+service RentalSessionService {
+    rpc StartRentalSession (StartRentalSessionRequest) returns (StartRentalSessionResponse);
+    rpc EndRentalSession (EndRentalSessionRequest) returns (EndRentalSessionResponse);
+    rpc GetCurrentSession (GetCurrentSessionRequest) returns (GetCurrentSessionResponse);
+}
+
+message StartRentalSessionRequest {
+    int32 userId = 1;
+    int32 scooterId = 2;
+}
+
+message StartRentalSessionResponse {
+    bool success = 1;
+    string error = 2;
+}
+
+message EndRentalSessionRequest {
+    int32 sessionId = 1;
+}
+
+message EndRentalSessionResponse {
+    bool success = 1;
+    string error = 2;
+    double totalCost = 3;
+}
+
+message GetCurrentSessionRequest {
+    int32 userId = 1;
+}
+
+message GetCurrentSessionResponse {
+    int32 sessionId = 1;
+    int32 scooterId = 2;
+    int64 startTime = 3;
+    bool ongoing = 4;
+}
