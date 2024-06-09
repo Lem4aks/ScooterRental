@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -18,7 +19,8 @@ namespace ClientService.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     userName = table.Column<string>(type: "text", nullable: false),
                     password = table.Column<string>(type: "text", nullable: false),
-                    email = table.Column<string>(type: "text", nullable: false)
+                    email = table.Column<string>(type: "text", nullable: false),
+                    SessionIds = table.Column<List<int>>(type: "integer[]", nullable: false)
                 },
                 constraints: table =>
                 {

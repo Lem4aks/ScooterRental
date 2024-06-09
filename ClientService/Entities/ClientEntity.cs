@@ -1,4 +1,5 @@
-﻿namespace ClientService.Entities
+﻿
+namespace ClientService.Entities
 {
     public class ClientEntity
     {
@@ -9,5 +10,8 @@
         public string password { get; set; }
 
         public string email { get; set; }
+
+        public List<int> SessionIds { get; set; } = new List<int>();
+
     }
 }

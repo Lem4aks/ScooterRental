@@ -1,9 +1,11 @@
 syntax = "proto3";
 
-package scooterinventory;
+package ScooterInventory;
 
 service ScooterInventoryService {
     rpc GetAvailableScooters (GetAvailableScootersRequest) returns (GetAvailableScootersResponse);
+    rpc AddANewScooter (Scooter) returns (AddNewScooterResponse);
+    rpc DeleteAScooter (DeleteScooterRequest) returns (DeleteScooterResponse);
 }
 
 message Scooter {
@@ -17,3 +19,16 @@ message GetAvailableScootersResponse {
 }
 
 message GetAvailableScootersRequest {}
+
+message AddNewScooterResponse {
+    bool isSuccess = 1;
+}
+
+message DeleteScooterResponse {
+    bool isSuccess = 1;
+    int32 id = 2;
+}
+
+message DeleteScooterRequest {
+    int32 id = 1;
+}

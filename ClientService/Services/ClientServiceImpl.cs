@@ -1,8 +1,8 @@
-﻿using Clientaccount;
+﻿using ClientAccount;
 using ClientService.Repositories;
 using Grpc.Core;
 using ClientService.Entities;
-using static Clientaccount.ClientService;
+using static ClientAccount.ClientService;
 
 namespace ClientService.Services
 {

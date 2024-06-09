@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\greet.proto" GrpcServices="Server" />
 	  <Protobuf Include="Protos\clientaccount.proto" GrpcServices="Server" />
   </ItemGroup>
 
@@ -26,6 +25,10 @@
     </PackageReference>
     <PackageReference Include="Npgsql" Version="8.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

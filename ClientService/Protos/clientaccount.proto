@@ -1,12 +1,17 @@
 syntax = "proto3";
 
-package clientaccount;
+package ClientAccount;
 
 service ClientService {
   rpc RegisterClient(RegisterClientRequest) returns (RegisterClientResponse);
   rpc AuthenticateClient(AuthenticateClientRequest) returns (AuthenticateClientResponse);
 }
 
+message Client {
+	string email = 1;
+	string userName = 2;
+	string password = 3;
+}
 message RegisterClientRequest {
   string email = 1;
   string userName = 2;

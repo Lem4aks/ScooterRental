@@ -5,11 +5,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Protobuf Include="Protos\greet.proto" GrpcServices="Server" />
-  </ItemGroup>
-
+	<ItemGroup>
+		<Protobuf Include="Protos\scooterinventory.proto" GrpcServices="Server" />
+	</ItemGroup>
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.27.1" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.57.0" />
@@ -25,6 +23,10 @@
     </PackageReference>
     <PackageReference Include="Npgsql" Version="8.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>
