@@ -3,7 +3,7 @@ namespace ClientService.Entities
 {
     public class ClientEntity
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         public string userName { get; set; }
 
