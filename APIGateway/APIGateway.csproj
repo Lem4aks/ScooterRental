@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,7 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.63.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.64.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ClientService\ClientService.csproj" />
+    <ProjectReference Include="..\RentalFront\RentalFront.csproj" />
+    <ProjectReference Include="..\RentalService\RentalService.csproj" />
+    <ProjectReference Include="..\ScooterService\ScooterService.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<Protobuf Include="ClientService\Protos\greet.proto" GrpcServices="Client"/>
+	</ItemGroup>
 </Project>
