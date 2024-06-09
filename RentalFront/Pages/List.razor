@@ -5,52 +5,47 @@
 
 <h3>Доступні транспортні засоби для прокату</h3>
 
-@if (list == null)
+@if (scooters == null)
 {
     <p>Завантаження...</p>
 }
-else if (list.Count == 0)
+else if (scooters.Count == 0)
 {
     <p>Немає доступних транспортних засобів.</p>
 }
 else
 {
     <ul>
-        @foreach (var vehicle in list)
+        @foreach (var scooter in scooters)
         {
             <li>
-                <h4>@vehicle.Name</h4>
-                <p>Марка: @vehicle.Brand</p>
-                <p>Модель: @vehicle.Model</p>
-                <p>Рік: @vehicle.Year</p>
+                <h4>ID: @scooter.Id</h4>
+                <p>Модель: @scooter.Model</p>
+                <p>Статус: @scooter.Status</p>
             </li>
         }
     </ul>
 }
 
 @code {
-    private List<Vehicle> list;
+    private List<Scooter> scooters;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            list = await HttpClient.GetFromJsonAsync<List<Vehicle>>("api/vehicles");
+            scooters = await HttpClient.GetFromJsonAsync<List<Scooter>>("api/scooters");
         }
-        catch (Exception ex)
-        {   
-            list = new List<Vehicle>();
+        catch (Exception)
+        {
+            scooters = new List<Scooter>();
         }
     }
 
-    public class Vehicle
+    public class Scooter
     {
-        public String Name { get; set; }
-
-        public String Brand { get; set; }
-
+        public int Id { get; set; }
         public string Model { get; set; }
-
-        public int Year { get; set; }
+        public string Status { get; set; }
     }
 }

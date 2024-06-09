@@ -13,19 +13,25 @@ main {
 }
 
 .top-row {
-    background-color: #f7f7f7;
-    border-bottom: 1px solid #d6d5d5;
-    justify-content: flex-end;
-    height: 3.5rem;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    height: 3.5rem;
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #d6d5d5;
+    padding: 0 2rem;
 }
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        white-space: nowrap;
-        /*margin-left: 1.5rem;*/
-        text-decoration: none;
-    }
+
+.dropdown {
+    margin-left: auto;
+}
+.top-row ::deep a, .top-row ::deep .btn-link {
+    margin-left: 0;
+    white-space: nowrap;
+    /*margin-left: 1.5rem;*/
+    text-decoration: none;
+}
 
     .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
         text-decoration: underline;
@@ -38,15 +44,22 @@ main {
 
 @media (max-width: 640.98px) {
     .top-row {
+        flex-direction: row;
+        align-items: center;
         justify-content: space-between;
     }
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        margin-left: 0;
+    .out_inf {
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+    .dropdown {
+        margin-left: auto;
     }
 }
 
 @media (min-width: 641px) {
+
     .page {
         flex-direction: row;
     }
@@ -63,12 +76,11 @@ main {
         top: 0;
         z-index: 1;
     }
-
-    .top-row.auth ::deep a:first-child {
-        flex: 1;
-        text-align: right;
-        width: 0;
-    }
+        .top-row.auth ::deep a:first-child {
+            flex: 1;
+            text-align: right;
+            width: 0;
+        }
 
     .top-row, article {
         padding-left: 2rem !important;

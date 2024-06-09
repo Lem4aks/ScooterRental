@@ -7,9 +7,15 @@
     </div>
 
     <main>
-        <div class="top-row px-4 d-flex justify-content-end align-items-center">
+        <div class="top-row px-4 d-flex align-items-center">
             @if (user != null)
             {
+                <div class="out_inf">
+                    <span>Поч</span>
+                    <span>Пот</span>
+                    <span>Зав</span>
+                    <span>Ціна</span>
+                </div> @* это временное решение ждём бд *@
                 <div class="dropdown" @onclick="ToggleDropdown" style="position: relative;">
                     <button class="btn btn-secondary dropdown-toggle">
                         @user
@@ -36,7 +42,7 @@
 </div>
 
 @code {
-    private string user;
+    private string user = "SD";
     private bool dropdownOpen = false;
 
     private void ToggleDropdown()
@@ -48,4 +54,3 @@
     {
     }
 }
-

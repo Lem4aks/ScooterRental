@@ -7,7 +7,7 @@
         <div class="col-md-6">
             <h3 class="text-center">Авторизація користувача</h3>
 
-            <EditForm Model="@user" class="mt-4">
+            <EditForm Model="@user" class="mt-4" OnValidSubmit="HandleValidSubmit">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
@@ -36,6 +36,11 @@
         [Required(ErrorMessage = "Пароль є обов'язковим")]
         [MinLength(6, ErrorMessage = "Пароль повинен містити щонайменше 6 символів")]
         public string Password { get; set; }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        // gRPC 
     }
 
 }
