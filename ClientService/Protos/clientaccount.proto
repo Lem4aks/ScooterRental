@@ -2,28 +2,28 @@ syntax = "proto3";
 
 package clientaccount;
 
-service ClientAccountService {
-    rpc AuthenticateUser (AuthenticateUserRequest) returns (AuthenticateUserResponse);
-    rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse);
+service ClientService {
+  rpc RegisterClient(RegisterClientRequest) returns (RegisterClientResponse);
+  rpc AuthenticateClient(AuthenticateClientRequest) returns (AuthenticateClientResponse);
 }
 
-message AuthenticateUserRequest {
-    string username = 1;
-    string password = 2;
+message RegisterClientRequest {
+  string email = 1;
+  string userName = 2;
+  string password = 3;
 }
 
-message AuthenticateUserResponse {
-    string token = 1;
-    bool success = 2;
-    string error = 3;
+message RegisterClientResponse {
+  bool isSuccess = 1;
+  string errorMessage = 2;
 }
 
-message RegisterUserRequest {
-    string username = 1;
-    string password = 2;
+message AuthenticateClientRequest {
+  string identifier = 1; // email or username
+  string password = 2;
 }
 
-message RegisterUserResponse {
-    bool success = 1;
-    string error = 2;
+message AuthenticateClientResponse {
+  bool isSuccess = 1;
+  string errorMessage = 2;
 }

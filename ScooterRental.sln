@@ -3,19 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.34928.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentalFront", "RentalFront\RentalFront.csproj", "{429A8EE7-443A-4404-868F-485F5939F6A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentalFront", "RentalFront\RentalFront.csproj", "{429A8EE7-443A-4404-868F-485F5939F6A1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{407CBCE7-4354-48FC-A26E-08809CE8B168}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIGateway", "APIGateway\APIGateway.csproj", "{32FDE84C-1FD2-44DD-913E-BBE213988AD3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIGateway", "APIGateway\APIGateway.csproj", "{32FDE84C-1FD2-44DD-913E-BBE213988AD3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{B5D1A446-B6D2-4A6A-9D66-85F951602B02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientService", "ClientService\ClientService.csproj", "{E66BE821-882A-4520-9A1D-30504568A1A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientService", "ClientService\ClientService.csproj", "{E66BE821-882A-4520-9A1D-30504568A1A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScooterService", "ScooterService\ScooterService.csproj", "{5054BBCE-2BA4-4F3B-9B6C-FB471F2D95E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScooterService", "ScooterService\ScooterService.csproj", "{5054BBCE-2BA4-4F3B-9B6C-FB471F2D95E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentalService", "RentalService\RentalService.csproj", "{6888822D-3D2B-47E4-A04C-4C46BE357ACD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentalService", "RentalService\RentalService.csproj", "{6888822D-3D2B-47E4-A04C-4C46BE357ACD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{B8EF9F08-62D8-4927-924E-507A1C6D536E}"
 EndProject
