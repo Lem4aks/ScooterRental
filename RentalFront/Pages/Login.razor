@@ -19,6 +19,10 @@
                     <label for="password" class="form-label">Пароль:</label>
                     <InputText id="password" type="password" class="form-control" @bind-Value="user.Password" />
                 </div>
+                <div class="mb-3">
+                    <label for="emaill" class="form-label">Пошта:</label>
+                    <InputText id="emaill" type="password" class="form-control" @bind-Value="user.Emaill" />
+                </div>
                 <button type="submit" class="btn btn-primary w-100">Авторизація</button>
             </EditForm>
         </div>
@@ -36,6 +40,9 @@
         [Required(ErrorMessage = "Пароль є обов'язковим")]
         [MinLength(6, ErrorMessage = "Пароль повинен містити щонайменше 6 символів")]
         public string Password { get; set; }
+
+        [EmailAddress(ErrorMessage = "Невірний формат пошти")]
+        public string Emaill { get; set; }
     }
 
     private async Task HandleValidSubmit()
