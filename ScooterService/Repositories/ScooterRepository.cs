@@ -18,6 +18,11 @@ namespace ScooterService.Repositories
             return await _context.Scooters.Where(s => s.Status).ToListAsync();
         }
 
+        public async Task<List<ScooterEntity>> GetAllScooters()
+        {
+            return await _context.Scooters.ToListAsync();
+        }
+
         public async Task AddScooterAsync(ScooterEntity scooter)
         {
             _context.Scooters.Add(scooter);

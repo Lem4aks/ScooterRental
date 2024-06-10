@@ -16,7 +16,7 @@ namespace ScooterService.Services
 
         public override async Task<GetAvailableScootersResponse> GetAvailableScooters(GetAvailableScootersRequest request, ServerCallContext context)
         {
-            List<Entities.ScooterEntity> availableScooters = await _repository.GetAvailableScooters();
+            List<ScooterEntity> availableScooters = await _repository.GetAvailableScooters();
             GetAvailableScootersResponse response = new GetAvailableScootersResponse();
             response.Scooters.AddRange(availableScooters.Select(s => new Scooter
             {
@@ -25,6 +25,21 @@ namespace ScooterService.Services
                 Status = s.Status,
                 SessionIds = { s.SessionIds.Select(id => id.ToString()) }
             }));
+            return response;
+        }
+
+        public override async Task<GetAllScootersResponse> GetAllScooters(GetAllScootersRequest request, ServerCallContext context)
+        {
+            List<ScooterEntity> allScooters = await _repository.GetAllScooters();
+            GetAllScootersResponse response = new GetAllScootersResponse();
+            response.Scooters.AddRange(allScooters.Select(s => new Scooter
+            {
+                Id = s.Id.ToString(),
+                Model = s.Model,
+                Status = s.Status,
+                SessionIds = { s.SessionIds.Select(id => id.ToString()) }
+            }));
+
             return response;
         }
 
