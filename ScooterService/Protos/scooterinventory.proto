@@ -6,12 +6,24 @@ service ScooterInventoryService {
     rpc GetAvailableScooters (GetAvailableScootersRequest) returns (GetAvailableScootersResponse);
     rpc AddANewScooter (Scooter) returns (AddNewScooterResponse);
     rpc DeleteAScooter (DeleteScooterRequest) returns (DeleteScooterResponse);
+    rpc UpdateScooterStatus (UpdateScooterStatusRequest) returns (UpdateScooterStatusResponse);
 }
 
 message Scooter {
-    int32 id = 1;
+    string id = 1;
     string model = 2;
-    string status = 3;
+    bool status = 3;
+    repeated string sessionIds = 4;
+}
+
+message UpdateScooterStatusRequest {
+    string id = 1;
+    bool status = 2;
+}
+
+message UpdateScooterStatusResponse {
+    bool isSuccess = 1;
+    bool status = 2;
 }
 
 message GetAvailableScootersResponse {
@@ -26,9 +38,9 @@ message AddNewScooterResponse {
 
 message DeleteScooterResponse {
     bool isSuccess = 1;
-    int32 id = 2;
+    string id = 2;
 }
 
 message DeleteScooterRequest {
-    int32 id = 1;
+    string id = 1;
 }

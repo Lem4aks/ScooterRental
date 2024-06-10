@@ -34,6 +34,7 @@
     <ProjectReference Include="..\ScooterService\ScooterService.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Migrations\" />
     <Folder Include="Protos\" />
   </ItemGroup>
 
