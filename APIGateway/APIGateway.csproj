@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 	<ItemGroup>
-		<Protobuf Include="..\ScooterService\Protos\*.proto" GrpcServices="Client" OutputDir="Generated" />
+		<Protobuf Include="..\ScooterService\Protos\*.proto" GrpcServices="Client" />
 	</ItemGroup>
 	<ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.27.1" />
@@ -25,10 +25,6 @@
     <PackageReference Include="Npgsql" Version="8.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Generated\" />
   </ItemGroup>
 
 </Project>

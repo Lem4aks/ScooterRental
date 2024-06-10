@@ -4,7 +4,7 @@ package ScooterInventory;
 
 service ScooterInventoryService {
     rpc GetAvailableScooters (GetAvailableScootersRequest) returns (GetAvailableScootersResponse);
-    rpc AddANewScooter (Scooter) returns (AddNewScooterResponse);
+    rpc AddScooter (AddScooterRequest) returns (AddScooterResponse);
     rpc DeleteAScooter (DeleteScooterRequest) returns (DeleteScooterResponse);
     rpc UpdateScooterStatus (UpdateScooterStatusRequest) returns (UpdateScooterStatusResponse);
     rpc GetAllScooters (GetAllScootersRequest) returns (GetAllScootersResponse);
@@ -17,6 +17,9 @@ message Scooter {
     repeated string sessionIds = 4;
 }
 
+message AddScooterRequest {
+    Scooter scooter = 1;
+}
 message GetAllScootersRequest {}
 
 message GetAllScootersResponse {
@@ -39,7 +42,7 @@ message GetAvailableScootersResponse {
 
 message GetAvailableScootersRequest {}
 
-message AddNewScooterResponse {
+message AddScooterResponse {
     bool isSuccess = 1;
 }
 

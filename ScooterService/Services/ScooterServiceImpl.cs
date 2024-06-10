@@ -43,17 +43,17 @@ namespace ScooterService.Services
             return response;
         }
 
-        public override async Task<AddNewScooterResponse> AddANewScooter(Scooter request, ServerCallContext context)
+        public override async Task<AddScooterResponse> AddScooter(AddScooterRequest request, ServerCallContext context)
         {
             var scooterEntity = new ScooterEntity
             {
-                Id = Guid.Parse(request.Id),
-                Model = request.Model,
-                Status = request.Status,
-                SessionIds = request.SessionIds.Select(id => Guid.Parse(id)).ToList()
+                Id = Guid.Parse(request.Scooter.Id),
+                Model = request.Scooter.Model,
+                Status = request.Scooter.Status,
+                SessionIds = request.Scooter.SessionIds.Select(id => Guid.Parse(id)).ToList()
             };
             await _repository.AddScooterAsync(scooterEntity);
-            return new AddNewScooterResponse { IsSuccess = true };
+            return new AddScooterResponse { IsSuccess = true };
         }
 
         public override async Task<DeleteScooterResponse> DeleteAScooter(DeleteScooterRequest request, ServerCallContext context)
