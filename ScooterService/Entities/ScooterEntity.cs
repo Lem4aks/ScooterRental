@@ -2,11 +2,11 @@
 {
     public class ScooterEntity
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Model { get; set; }
 
         public string Status { get; set; }
 
-        public List<int> SessionIds { get; set; } = new List<int>();
+        public List<Guid> SessionIds { get; set; } = new List<Guid>();
     }
 }
