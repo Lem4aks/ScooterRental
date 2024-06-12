@@ -13,11 +13,6 @@ namespace APIGateway
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddGrpc();
-            builder.Services.AddGrpcClient<ClientService.Services>((serivces, options) =>
-            {
-                options.Address = new Uri("https://localhost:7180");
-            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -26,7 +21,6 @@ namespace APIGateway
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
