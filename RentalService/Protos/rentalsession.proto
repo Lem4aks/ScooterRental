@@ -4,4 +4,11 @@ package RentalSession;
 
 service RentalSessionService {}
 
-message Session {}
+message Session {
+    string id = 1;  
+    string clientId = 2;
+    string scooterId = 3;
+    string startTime = 4;   
+    string endTime = 5;     
+    double rentalCost = 6;  
+}

@@ -28,8 +28,8 @@ namespace RentalService.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("timestamp with time zone");
@@ -37,8 +37,8 @@ namespace RentalService.Migrations
                     b.Property<decimal>("RentalCost")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("ScooterId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ScooterId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("timestamp with time zone");

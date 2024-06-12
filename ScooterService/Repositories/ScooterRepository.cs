@@ -30,7 +30,7 @@ namespace ScooterService.Repositories
         }
         public async Task<bool> DeleteScooterAsync(Guid id)
         {
-            ScooterEntity scooter = await _context.Scooters.FindAsync(id);
+            ScooterEntity? scooter = await _context.Scooters.FindAsync(id);
             if (scooter == null)
             {
                 return false;
@@ -43,13 +43,13 @@ namespace ScooterService.Repositories
 
         public async Task<bool> UpdateScooterStatusAsync(Guid id, bool status)
         {
-            ScooterEntity scooter = await _context.Scooters.FindAsync(id);
+            ScooterEntity? scooter = await _context.Scooters.FindAsync(id);
             if (scooter == null)
             {
                 return false;
             }
 
-            scooter.Status = status;
+            scooter!.Status = status;
             _context.Scooters.Update(scooter);
             await _context.SaveChangesAsync();
             return true;
