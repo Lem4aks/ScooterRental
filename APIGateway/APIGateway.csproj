@@ -13,6 +13,10 @@
     <PackageReference Include="Grpc" Version="2.46.6" />
     <PackageReference Include="Grpc.Core" Version="2.46.6" />
     <PackageReference Include="Grpc.Net.Client" Version="2.63.0" />
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.63.0" />
+    <PackageReference Include="Grpc.Core" Version="2.46.6" />
     <PackageReference Include="Grpc.Tools" Version="2.64.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,7 +28,17 @@
     </PackageReference>
     <PackageReference Include="Npgsql" Version="8.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+    <PackageReference Include="MMLib.SwaggerForOcelot" Version="8.2.0" />
+    <PackageReference Include="Npgsql" Version="8.0.3" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+    <PackageReference Include="Ocelot" Version="23.3.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ClientService\ClientService.csproj" />
+    <ProjectReference Include="..\RentalFront\RentalFront.csproj" />
+    <ProjectReference Include="..\RentalService\RentalService.csproj" />
+    <ProjectReference Include="..\ScooterService\ScooterService.csproj" />
+  </ItemGroup>
 </Project>
