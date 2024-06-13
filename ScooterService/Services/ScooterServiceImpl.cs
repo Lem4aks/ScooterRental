@@ -1,5 +1,5 @@
 ﻿using Grpc.Core;
-using ScooterInventory;
+using ScooterInventoryGrpc;
 using ScooterService.Entities;
 using ScooterService.Repositories;
 
@@ -43,7 +43,7 @@ namespace ScooterService.Services
             return response;
         }
 
-        public override async Task<AddScooterResponse> AddScooter(AddScooterRequest request, ServerCallContext context)
+        public override async Task<AddScooterResponse> AddScooter(ScooterInventoryGrpc.AddScooterRequest request, ServerCallContext context)
         {
             var scooterEntity = new ScooterEntity
             {

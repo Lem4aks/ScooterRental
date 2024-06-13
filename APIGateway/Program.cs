@@ -1,4 +1,3 @@
-using ClientService;
 using Ocelot.Middleware;
 using Ocelot.DependencyInjection;
 namespace APIGateway

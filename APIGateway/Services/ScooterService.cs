@@ -1,4 +1,4 @@
-﻿using APIGateway.Data;
+﻿using APIGateway.Models;
 
 namespace APIGateway.Services
 {
@@ -12,7 +12,7 @@ namespace APIGateway.Services
         
         public async Task<List<Scooter>> GetScooterList()
         {
-
+            return null;
         }
     }
 }

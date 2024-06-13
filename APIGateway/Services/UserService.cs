@@ -1,4 +1,4 @@
-﻿using APIGateway.Data;
+﻿using APIGateway.Models;
 
 namespace APIGateway.Services
 {
