@@ -1,5 +1,6 @@
 using Ocelot.Middleware;
 using Ocelot.DependencyInjection;
+using APIGateway.Models;
 namespace APIGateway
 {
     public class Program
@@ -9,37 +10,30 @@ namespace APIGateway
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
             builder.Services.AddOcelot();
             builder.Services.AddSwaggerForOcelot(builder.Configuration);
+
+            // Register User class with dependency injection container
+            builder.Services.AddScoped<User>();
+            builder.Services.AddScoped<Scooter>();
+
             builder.Configuration.AddJsonFile("ocelot.json");
 
-            var app = builder.Build();
+            WebApplication app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
             app.UseSwaggerForOcelotUI(option =>
             {
-                option.PathToSwaggerGenerator = "/swagger/docs";
+                option.PathToSwaggerGenerator = "/swagger";
             });
-
             app.MapControllers();
 
             app.UseOcelot();
-
             app.RunAsync();
         }
+
     }
 }
