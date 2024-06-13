@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using RentalService.Data;
 using RentalService.Services;
-using ScooterService.Data;
 
 namespace RentalService
 {
