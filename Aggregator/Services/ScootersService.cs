@@ -2,7 +2,6 @@
 using ScooterService.Entities;
 using ScooterService.Repositories;
 
-
 namespace Aggregator.Services
 {
     public class ScootersService : IScooterService
