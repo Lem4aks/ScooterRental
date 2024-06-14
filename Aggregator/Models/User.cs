@@ -1,4 +1,4 @@
-﻿namespace APIGateway.Models
+﻿namespace Aggregator.Models
 {
     public class User
     {
@@ -11,5 +11,6 @@
         public string email { get; set; }
 
         public List<Guid> SessionIds { get; set; } = new List<Guid>();
+       
     }
 }

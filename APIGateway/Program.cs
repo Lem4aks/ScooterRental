@@ -1,7 +1,6 @@
 using Ocelot.Middleware;
 using Ocelot.DependencyInjection;
-using APIGateway.Models;
-namespace APIGateway
+namespace Aggregator
 {
     public class Program
     {
@@ -14,10 +13,6 @@ namespace APIGateway
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddOcelot();
             builder.Services.AddSwaggerForOcelot(builder.Configuration);
-
-            // Register User class with dependency injection container
-            builder.Services.AddScoped<User>();
-            builder.Services.AddScoped<Scooter>();
 
             builder.Configuration.AddJsonFile("ocelot.json");
 

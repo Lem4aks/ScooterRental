@@ -1,7 +1,7 @@
-﻿using APIGateway.Models;
+﻿using Aggregator.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace APIGateway.Controllers
+namespace Aggregator.Controllers
 {
     public class RentalController : Controller
     {

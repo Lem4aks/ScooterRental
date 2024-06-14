@@ -1,4 +1,4 @@
-﻿namespace APIGateway.Models
+﻿namespace Aggregator.Models
 {
     public class Scooter
     {
