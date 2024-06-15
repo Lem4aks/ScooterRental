@@ -22,4 +22,11 @@
     <ProjectReference Include="..\RentalService\RentalService.csproj" />
     <ProjectReference Include="..\ScooterService\ScooterService.csproj" />
   </ItemGroup>
+	<ItemGroup>
+  <Protobuf Include="..\ClientService\Protos\clientaccount.proto" GrpcServices="Client" />
+  <Protobuf Include="..\ScooterService\Protos\scooterinventory.proto" GrpcServices="Client" />
+		<Protobuf Include="..\RentalService\Protos\rentalsession.proto" GrpcServices="Client" />
+</ItemGroup>
+
+
 </Project>

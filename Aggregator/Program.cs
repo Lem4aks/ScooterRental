@@ -12,16 +12,18 @@ builder.Services
     .AddScoped<IUserService, UserService>();
 
 // Register gRPC clients
-builder.Services.AddGrpcClient<ClientAccount.ClientService.ClientServiceBase>((services, options) =>
+builder.Services.AddGrpcClient< ClientAccount.ClientService.ClientServiceClient>((services, options) =>
 {
     options.Address = new Uri("https://localhost:7180"); // Обновите URI на правильный
 });
-
-builder.Services.AddGrpcClient<ScooterInventoryGrpc.ScooterInventoryService.ScooterInventoryServiceBase>((services, options) =>
+builder.Services.AddGrpcClient<ScooterInventoryGrpc.ScooterInventoryService.ScooterInventoryServiceClient>((services, options) =>
 {
     options.Address = new Uri("https://localhost:7130"); // Обновите URI на правильный
 });
-
+builder.Services.AddGrpcClient<RentalSession.RentalSessionService>((services, options) =>
+{
+    options.Address = new Uri("https://localhost:7291"); // Обновите URI на правильный
+});
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

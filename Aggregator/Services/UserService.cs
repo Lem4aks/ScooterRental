@@ -1,58 +1,58 @@
 ﻿using Aggregator.Models;
-using ClientService.Entities;
-using ClientService.Repositories;
+using ClientAccount;
+using Grpc.Net.Client;
 
 namespace Aggregator.Services
 {
     public class UserService : IUserService
     {
-        private readonly IClientRepository _clientRepository;
+        private readonly ClientAccount.ClientService.ClientServiceClient _clientServiceClient;
 
-        public UserService(IClientRepository clientRepository)
+        public UserService(ClientAccount.ClientService.ClientServiceClient clientServiceClient)
         {
-            _clientRepository = clientRepository;
+            _clientServiceClient = clientServiceClient;
         }
 
         public async Task Login(User user)
         {
-            ClientEntity clientEntity = await _clientRepository.GetClientByUserName(user.userName);
-
-            if (clientEntity != null)
+            var request = new AuthenticateClientRequest
             {
-                await Registration(user);
-            }
-            else
-            {
-                var newClient = new ClientEntity
-                {
-                    Id = user.Id,
-                    userName = user.userName,
-                    password = user.password,
-                    email = user.email,
-                    SessionIds = user.SessionIds
-                };
+                Identifier = user.userName,
+                Password = user.password
+            };
 
-                await _clientRepository.AddClient(newClient);
+            var response = await _clientServiceClient.AuthenticateClientAsync(request);
+
+            if (!response.IsSuccess)
+            {
+                // Handle unsuccessful login attempt
+                throw new Exception(response.ErrorMessage);
             }
         }
 
         public void Logout()
         {
-            // не знаю еще нужен он или нет
+            // Not implemented
         }
 
         public async Task<bool> Registration(User user)
         {
-            var clientEntity = new ClientEntity
+            var request = new RegisterClientRequest
             {
-                Id = user.Id,
-                userName = user.userName,
-                password = user.password,
-                email = user.email,
-                SessionIds = user.SessionIds
+                Email = user.email,
+                UserName = user.userName,
+                Password = user.password
             };
 
-            return await _clientRepository.AddClient(clientEntity);
+            var response = await _clientServiceClient.RegisterClientAsync(request);
+
+            if (!response.IsSuccess)
+            {
+                // Handle unsuccessful registration attempt
+                throw new Exception(response.ErrorMessage);
+            }
+
+            return response.IsSuccess;
         }
     }
 }

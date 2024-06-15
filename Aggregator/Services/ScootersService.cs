@@ -1,46 +1,69 @@
 ﻿using Aggregator.Models;
-using ScooterService.Entities;
-using ScooterService.Repositories;
+using ScooterInventoryGrpc;
+using Grpc.Net.Client;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Aggregator.Services
 {
     public class ScootersService : IScooterService
     {
-        private readonly IScooterRepository _repository;
+        private readonly ScooterInventoryService.ScooterInventoryServiceClient _scooterClient;
 
-        public ScootersService(IScooterRepository repository)
+        public ScootersService(ScooterInventoryService.ScooterInventoryServiceClient scooterClient)
         {
-            _repository = repository;
+            _scooterClient = scooterClient;
         }
 
-        public async Task AddScooter(Scooter scooter)
+        public async Task AddedScooter(Models.Scooter scooter)
         {
-            var scooterEntity = new ScooterEntity
+            var scooterProto = new ScooterInventoryGrpc.Scooter
             {
-                Id = scooter.Id,
+                Id = scooter.Id.ToString(),
                 Model = scooter.Model,
                 Status = scooter.Status,
-                SessionIds = scooter.SessionIds
+                SessionIds = { scooter.SessionIds.Select(id => id.ToString()) }
             };
 
-            await _repository.AddScooterAsync(scooterEntity);
+            var request = new AddScooterRequest
+            {
+                Scooter = scooterProto
+            };
+
+            var response = await _scooterClient.AddScooterAsync(request);
+            if (!response.IsSuccess)
+            {
+                throw new Exception("Failed to add scooter.");
+            }
         }
 
-        public async Task<List<Scooter>> GetScooterList()
+        public async Task<List<Models.Scooter>> GetScooterList()
         {
-            var scooterEntities = await _repository.GetAllScooters();
-            return scooterEntities.Select(se => new Scooter
+            var request = new GetAllScootersRequest();
+            var response = await _scooterClient.GetAllScootersAsync(request);
+
+            return response.Scooters.Select(se => new Models.Scooter
             {
-                Id = se.Id,
+                Id = Guid.Parse(se.Id),
                 Model = se.Model,
                 Status = se.Status,
-                SessionIds = se.SessionIds
+                SessionIds = se.SessionIds.Select(Guid.Parse).ToList()
             }).ToList();
         }
 
         public async Task RemoveScooter(Guid id)
         {
-            await _repository.DeleteScooterAsync(id);
+            var request = new DeleteScooterRequest
+            {
+                Id = id.ToString()
+            };
+
+            var response = await _scooterClient.DeleteAScooterAsync(request);
+            if (!response.IsSuccess)
+            {
+                throw new Exception("Failed to delete scooter.");
+            }
         }
     }
 }

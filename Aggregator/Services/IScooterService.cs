@@ -1,11 +1,14 @@
-﻿using Aggregator.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Aggregator.Models;
 
 namespace Aggregator.Services
 {
     public interface IScooterService
     {
-        public Task<List<Scooter>> GetScooterList();
-        public Task AddScooter(Scooter scooter);
-        public Task RemoveScooter(Guid Id);
+        Task AddedScooter(Scooter scooter);
+        Task<List<Scooter>> GetScooterList();
+        Task RemoveScooter(Guid id);
     }
 }
