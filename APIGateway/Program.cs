@@ -1,34 +1,33 @@
-using Ocelot.Middleware;
 using Ocelot.DependencyInjection;
-namespace Aggregator
+using Ocelot.Middleware;
+
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+// Добавление контроллеров и Endpoints API Explorer
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+
+// Добавление Ocelot и SwaggerForOcelot
+builder.Services.AddOcelot();
+builder.Services.AddSwaggerForOcelot(builder.Configuration);
+
+// Загрузка конфигурации ocelot.json
+builder.Configuration.AddJsonFile("ocelot.json");
+
+WebApplication app = builder.Build();
+
+// Настройка middleware
+app.UseHttpsRedirection();
+app.UseAuthorization();
+
+// Настройка SwaggerForOcelot UI
+app.UseSwaggerForOcelotUI(options =>
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+    options.PathToSwaggerGenerator = "/swagger/docs";
+});
 
-            // Add services to the container.
-            builder.Services.AddControllers();
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddOcelot();
-            builder.Services.AddSwaggerForOcelot(builder.Configuration);
+app.MapControllers();
 
-            builder.Configuration.AddJsonFile("ocelot.json");
-
-            WebApplication app = builder.Build();
-
-            app.UseHttpsRedirection();
-            app.UseAuthorization();
-            app.UseSwaggerForOcelotUI(option =>
-            {
-                option.PathToSwaggerGenerator = "/swagger";
-            });
-            app.MapControllers();
-
-            app.UseOcelot();
-            app.RunAsync();
-        }
-
-    }
-}
+// Запуск Ocelot
+await app.UseOcelot();
+await app.RunAsync();

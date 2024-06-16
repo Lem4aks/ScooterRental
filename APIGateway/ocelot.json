@@ -3,46 +3,39 @@
     {
       "SwaggerKey": "userapi",
       "UpstreamPathTemplate": "/api/{version}/user",
-      "UpstreamHttpMethod": [
-        "GET"
-      ],
+      "UpstreamHttpMethod": [ "GET" ],
       "DownstreamPathTemplate": "/api/{version}/user",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7180
+          "Port": 7132
         }
       ]
     },
     {
       "SwaggerKey": "aggregator",
       "UpstreamPathTemplate": "/api/{version}/scooter/{id}/user",
-      "UpstreamHttpMethod": [
-        "GET",
-        "POST"
-      ],
+      "UpstreamHttpMethod": [ "GET", "POST" ],
       "DownstreamPathTemplate": "/api/{version}/scooter/{id}/user",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7291
+          "Port": 7132
         }
       ]
     },
     {
-      "SwaggerKey": "scootertapi",
+      "SwaggerKey": "scooterapi",
       "UpstreamPathTemplate": "/api/{version}/scooter",
-      "UpstreamHttpMethod": [
-        "GET"
-      ],
+      "UpstreamHttpMethod": [ "GET","POST","DELETE","PUT" ],
       "DownstreamPathTemplate": "/api/{version}/scooter",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7130
+          "Port": 7132
         }
       ]
     }
@@ -58,7 +51,7 @@
         {
           "Name": "User API",
           "Version": "v1",
-          "Url": "https://localhost:7180/swagger/v1/swagger.json"
+          "Url": "https://localhost:7132/swagger/v1/swagger.json"
         }
       ]
     },
@@ -68,7 +61,7 @@
         {
           "Name": "Aggregator",
           "Version": "v1",
-          "Url": "https://localhost:7291/swagger/v1/swagger.json"
+          "Url": "https://localhost:7132/swagger/v1/swagger.json"
         }
       ]
     },
@@ -78,7 +71,7 @@
         {
           "Name": "Scooter API",
           "Version": "v1",
-          "Url": "https://localhost:7130/swagger/v1/swagger.json"
+          "Url": "https://localhost:7132/swagger/v1/swagger.json"
         }
       ]
     }

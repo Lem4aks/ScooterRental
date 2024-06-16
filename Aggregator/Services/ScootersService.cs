@@ -37,7 +37,6 @@ namespace Aggregator.Services
                 throw new Exception("Failed to add scooter.");
             }
         }
-
         public async Task<List<Models.Scooter>> GetScooterList()
         {
             var request = new GetAllScootersRequest();
@@ -51,7 +50,33 @@ namespace Aggregator.Services
                 SessionIds = se.SessionIds.Select(Guid.Parse).ToList()
             }).ToList();
         }
+        public async Task<List<Models.Scooter>> GetAvailableScooters()
+        {
+            var request = new GetAvailableScootersRequest();
+            var response = await _scooterClient.GetAvailableScootersAsync(request);
 
+            return response.Scooters.Select(se => new Models.Scooter
+            {
+                Id = Guid.Parse(se.Id),
+                Model = se.Model,
+                Status = se.Status,
+                SessionIds = se.SessionIds.Select(Guid.Parse).ToList()
+            }).ToList();
+        }
+        public async Task UpdateScooterStatus(Guid id, bool status)
+        {
+            var request = new UpdateScooterStatusRequest
+            {
+                Id = id.ToString(),
+                Status = status
+            };
+
+            var response = await _scooterClient.UpdateScooterStatusAsync(request);
+            if (!response.IsSuccess)
+            {
+                throw new Exception("Failed to update scooter status.");
+            }
+        }
         public async Task RemoveScooter(Guid id)
         {
             var request = new DeleteScooterRequest

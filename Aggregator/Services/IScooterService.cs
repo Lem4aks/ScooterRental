@@ -9,6 +9,8 @@ namespace Aggregator.Services
     {
         Task AddedScooter(Scooter scooter);
         Task<List<Scooter>> GetScooterList();
+        Task<List<Scooter>> GetAvailableScooters();
+        public Task UpdateScooterStatus(Guid id, bool status);
         Task RemoveScooter(Guid id);
     }
 }
