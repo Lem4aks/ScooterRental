@@ -13,13 +13,22 @@ builder.Services.AddSwaggerForOcelot(builder.Configuration);
 
 // Загрузка конфигурации ocelot.json
 builder.Configuration.AddJsonFile("ocelot.json");
-
+// Настройка CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder => builder
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .WithExposedHeaders("Content-Disposition"));
+});
 WebApplication app = builder.Build();
 
 // Настройка middleware
 app.UseHttpsRedirection();
 app.UseAuthorization();
-
+// Настройка CORS
+app.UseCors("CorsPolicy");
 // Настройка SwaggerForOcelot UI
 app.UseSwaggerForOcelotUI(options =>
 {

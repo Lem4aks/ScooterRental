@@ -29,6 +29,8 @@
     <PackageReference Include="Npgsql" Version="8.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
     <PackageReference Include="Ocelot" Version="23.3.3" />
+    <PackageReference Include="Ocelot.Provider.Consul" Version="23.3.3" />
+    <PackageReference Include="Ocelot.Provider.Polly" Version="23.3.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 </Project>
