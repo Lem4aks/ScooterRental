@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+option csharp_namespace = "ScooterInventoryGrpc";
+
+package ScooterInventory;
+
+service ScooterInventoryService {
+    rpc GetAvailableScooters (GetAvailableScootersRequest) returns (GetAvailableScootersResponse);
+    rpc AddScooter (AddScooterRequest) returns (AddScooterResponse);
+    rpc DeleteAScooter (DeleteScooterRequest) returns (DeleteScooterResponse);
+    rpc UpdateScooterStatus (UpdateScooterStatusRequest) returns (UpdateScooterStatusResponse);
+    rpc GetAllScooters (GetAllScootersRequest) returns (GetAllScootersResponse);
+}
+
+message Scooter {
+    string id = 1;
+    string model = 2;
+    bool status = 3;
+    repeated string sessionIds = 4;
+}
+
+message AddScooterRequest {
+    Scooter scooter = 1;
+}
+message GetAllScootersRequest {}
+
+message GetAllScootersResponse {
+    repeated Scooter scooters = 1;
+}
+
+message UpdateScooterStatusRequest {
+    string id = 1;
+    bool status = 2;
+}
+
+message UpdateScooterStatusResponse {
+    bool isSuccess = 1;
+    bool status = 2;
+}
+
+message GetAvailableScootersResponse {
+    repeated Scooter scooters = 1;
+}
+
+message GetAvailableScootersRequest {}
+
+message AddScooterResponse {
+    bool isSuccess = 1;
+}
+
+message DeleteScooterResponse {
+    bool isSuccess = 1;
+    string id = 2;
+}
+
+message DeleteScooterRequest {
+    string id = 1;
+}

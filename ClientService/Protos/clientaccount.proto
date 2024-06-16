@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option csharp_namespace = "ClientAccount";
+
+package ClientAccount;
+
+service ClientService {
+  rpc RegisterClient(RegisterClientRequest) returns (RegisterClientResponse);
+  rpc AuthenticateClient(AuthenticateClientRequest) returns (AuthenticateClientResponse);
+}
+
+message Client {
+	string email = 1;
+	string userName = 2;
+	string password = 3;
+}
+message RegisterClientRequest {
+  string email = 1;
+  string userName = 2;
+  string password = 3;
+}
+
+message RegisterClientResponse {
+  bool isSuccess = 1;
+  string errorMessage = 2;
+}
+
+message AuthenticateClientRequest {
+  string identifier = 1; // email or username
+  string password = 2;
+}
+
+message AuthenticateClientResponse {
+  bool isSuccess = 1;
+  string errorMessage = 2;
+}
