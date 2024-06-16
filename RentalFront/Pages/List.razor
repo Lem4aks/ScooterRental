@@ -4,28 +4,43 @@
 @inject HttpClient HttpClient
 
 <h3>Доступні транспортні засоби для прокату</h3>
+<style>
 
-@if (scooters == null)
-{
-    <p>Завантаження...</p>
-}
-else if (scooters.Count == 0)
-{
-    <p>Немає доступних транспортних засобів.</p>
-}
-else
-{
-    <ul>
-        @foreach (var scooter in scooters)
-        {
-            <li>
-                <h4>ID: @scooter.Id</h4>
-                <p>Модель: @scooter.Model</p>
-                <p>Статус: @scooter.Status</p>
-            </li>
-        }
-    </ul>
-}
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('4357616.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        filter: blur(1px);
+        opacity: 0.5;
+        z-index: -1;
+    }
+
+</style>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Model</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var scooter in scooters)
+            {
+                <tr>
+                    <td>ID: @scooter.Id</td>
+                    <td>>Модель: @scooter.Model</td>
+                    <td>Статус: @scooter.Status</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
 @code {
     private List<Scooter> scooters;
