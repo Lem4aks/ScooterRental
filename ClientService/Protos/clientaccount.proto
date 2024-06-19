@@ -9,7 +9,7 @@ service ClientService {
   rpc AuthenticateClient(AuthenticateClientRequest) returns (AuthenticateClientResponse);
 }
 
-message ClientMessage {
+message ClientMessage  {
 	string email = 1;
 	string userName = 2;
 	string password = 3;

@@ -1,5 +1,10 @@
-using Ocelot.Middleware;
-using Ocelot.DependencyInjection;
+using Grpc.Net.Client;
+using Grpc.Net.ClientFactory;
+using RentalSession;
+using ClientAccount;
+using ScooterInventoryGrpc;
+using APIGateway.Repositories;
+using APIGateway.Interfaces.Repositories;
 namespace APIGateway
 {
     public class Program
@@ -14,9 +19,26 @@ namespace APIGateway
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddOcelot();
-            builder.Services.AddSwaggerForOcelot(builder.Configuration);
-            builder.Configuration.AddJsonFile("ocelot.json");
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+            builder.Services.AddScoped<IClientRepository, ClientRepository>();
+            builder.Services.AddScoped<IScooterRepository, ScooterRepository>();
+            builder.Services.AddScoped<ISessionRepository, SessionRepository>();
+
+            builder.Services.AddGrpcClient<ClientService.ClientServiceClient>(o =>
+            {
+                o.Address = new Uri("https://localhost:5001");
+            });
+
+            builder.Services.AddGrpcClient<ScooterInventoryService.ScooterInventoryServiceClient>(o =>
+            {
+                o.Address = new Uri("https://localhost:5002");
+            });
+
+            builder.Services.AddGrpcClient<RentalSessionService.RentalSessionServiceClient>(o =>
+            {
+                o.Address = new Uri("https://localhost:5003");
+            });
 
             var app = builder.Build();
 
@@ -30,16 +52,12 @@ namespace APIGateway
 
             app.UseAuthorization();
 
-            app.UseSwaggerForOcelotUI(option =>
-            {
-                option.PathToSwaggerGenerator = "/swagger/docs";
-            });
+            
 
             app.MapControllers();
 
-            app.UseOcelot();
 
-            app.RunAsync();
+            app.Run();
         }
     }
 }

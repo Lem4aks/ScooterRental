@@ -7,7 +7,7 @@ package ScooterInventory;
 service ScooterInventoryService {
     rpc GetAvailableScooters (GetAvailableScootersRequest) returns (GetAvailableScootersResponse);
     rpc AddScooter (AddScooterRequest) returns (AddScooterResponse);
-    rpc DeleteAScooter (DeleteScooterRequest) returns (DeleteScooterResponse);
+    rpc DeleteScooter (DeleteScooterRequest) returns (DeleteScooterResponse);
     rpc UpdateScooterStatus (UpdateScooterStatusRequest) returns (UpdateScooterStatusResponse);
     rpc GetAllScooters (GetAllScootersRequest) returns (GetAllScootersResponse);
     rpc AddSession (AddSessionRequest) returns (AddSessionResponse);
@@ -20,21 +20,16 @@ message ScooterMessage {
     repeated string sessionIds = 4;
 }
 
-message StartSessionRequest {
+message AddSessionRequest {
     string sessionId = 1;
     string scooterId = 2;
 }
 
-message AddSessionRequest {
-    bool status = 1;
-}
-
 message AddSessionResponse {
-    bool isSuccess = 1; 
+    bool isSuccess = 1;
 }
-
 message AddScooterRequest {
-    ScooterMessage scooter = 1;
+    string model = 1;
 }
 message GetAllScootersRequest {}
 

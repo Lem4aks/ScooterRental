@@ -11,7 +11,7 @@ namespace ScooterService
         {
             var builder = WebApplication.CreateBuilder(args);
             var configuration = builder.Configuration;
-
+            builder.Services.AddAutoMapper(typeof(DataBaseMappings));
             builder.Services.AddDbContext<ScooterDbContext>(
                 options =>
                 {

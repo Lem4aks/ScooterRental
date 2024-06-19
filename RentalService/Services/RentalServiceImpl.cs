@@ -49,7 +49,7 @@ namespace RentalService.Services
 
             if (sessionToStart != null)
             {
-                return new StartSessionResponse { IsSuccess = true };
+                return new StartSessionResponse { IsSuccess = true, SessionId = sessionToStart.Id.ToString() };
             }
 
             else

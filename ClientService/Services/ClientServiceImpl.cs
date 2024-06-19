@@ -44,7 +44,7 @@ namespace ClientService.Services
 
             else
             {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, "Unable to end a register a user"));
+                return new RegisterClientResponse { IsSuccess = false, ErrorMessage = "Failed to register a user" };
             }
 
         }

@@ -57,7 +57,7 @@ namespace ClientService.Repositories
                 return false;
             }
 
-            clientEntity.SessionIds.Add(sessionId);
+            clientEntity.SessionIds?.Add(sessionId);
 
             _context.Clients.Update(clientEntity);
 

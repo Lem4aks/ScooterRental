@@ -14,7 +14,7 @@ namespace ClientService.Entities
 
         public string? email { get; set; }
 
-        public List<Guid> SessionIds { get; set; }
+        public List<Guid>? SessionIds { get; set; }
 
  
     }

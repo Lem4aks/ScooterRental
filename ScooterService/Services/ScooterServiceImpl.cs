@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
 using ScooterInventoryGrpc;
 using ScooterService.Entities;
+using ScooterService.Models;
 using ScooterService.Repositories;
 
 namespace ScooterService.Services
@@ -16,47 +17,58 @@ namespace ScooterService.Services
 
         public override async Task<GetAvailableScootersResponse> GetAvailableScooters(GetAvailableScootersRequest request, ServerCallContext context)
         {
-            List<ScooterEntity> availableScooters = await _repository.GetAvailableScooters();
+            List<Scooter> availableScooters = await _repository.GetAvailableScooters();
             GetAvailableScootersResponse response = new GetAvailableScootersResponse();
             response.Scooters.AddRange(availableScooters.Select(s => new ScooterMessage
             {
                 Id = s.Id.ToString(),
                 Model = s.Model,
                 Status = s.Status,
-                SessionIds = { s.SessionIds.Select(id => id.ToString()) }
+                SessionIds = { s.SessionIds?.Select(id => id.ToString()) }
             }));
             return response;
         }
 
         public override async Task<GetAllScootersResponse> GetAllScooters(GetAllScootersRequest request, ServerCallContext context)
         {
-            List<ScooterEntity> allScooters = await _repository.GetAllScooters();
+            List<Scooter> allScooters = await _repository.GetAllScooters();
             GetAllScootersResponse response = new GetAllScootersResponse();
             response.Scooters.AddRange(allScooters.Select(s => new ScooterMessage
             {
                 Id = s.Id.ToString(),
                 Model = s.Model,
                 Status = s.Status,
-                SessionIds = { s.SessionIds.Select(id => id.ToString()) }
+                SessionIds = { s.SessionIds?.Select(id => id.ToString()) }
             }));
 
             return response;
         }
 
+        public override async Task<AddSessionResponse> AddSession(AddSessionRequest request, ServerCallContext context)
+        {
+            bool check = await _repository.AddSession(Guid.Parse(request.SessionId), Guid.Parse(request.ScooterId));
+
+            if (check == false)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Unable to find a scooter with this ID"));
+            }
+
+            return new AddSessionResponse { IsSuccess = true };
+        }
         public override async Task<AddScooterResponse> AddScooter(AddScooterRequest request, ServerCallContext context)
         {
-            var scooterEntity = new ScooterEntity
+            Scooter newScooter = Scooter.CreateScooter(request.Model);
+            bool check = await _repository.AddScooterAsync(newScooter);
+
+            if (check == true)
             {
-                Id = Guid.Parse(request.Scooter.Id),
-                Model = request.Scooter.Model,
-                Status = request.Scooter.Status,
-                SessionIds = request.Scooter.SessionIds.Select(id => Guid.Parse(id)).ToList()
-            };
-            await _repository.AddScooterAsync(scooterEntity);
-            return new AddScooterResponse { IsSuccess = true };
+                return new AddScooterResponse { IsSuccess = true };
+            }
+            else
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Unable to add a scooter"));
         }
 
-        public override async Task<DeleteScooterResponse> DeleteAScooter(DeleteScooterRequest request, ServerCallContext context)
+        public override async Task<DeleteScooterResponse> DeleteScooter(DeleteScooterRequest request, ServerCallContext context)
         {
             bool success = await _repository.DeleteScooterAsync(Guid.Parse(request.Id));
             return new DeleteScooterResponse { IsSuccess = true };
