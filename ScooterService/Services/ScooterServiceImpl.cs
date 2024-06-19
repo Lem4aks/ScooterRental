@@ -18,7 +18,7 @@ namespace ScooterService.Services
         {
             List<ScooterEntity> availableScooters = await _repository.GetAvailableScooters();
             GetAvailableScootersResponse response = new GetAvailableScootersResponse();
-            response.Scooters.AddRange(availableScooters.Select(s => new Scooter
+            response.Scooters.AddRange(availableScooters.Select(s => new ScooterMessage
             {
                 Id = s.Id.ToString(),
                 Model = s.Model,
@@ -32,7 +32,7 @@ namespace ScooterService.Services
         {
             List<ScooterEntity> allScooters = await _repository.GetAllScooters();
             GetAllScootersResponse response = new GetAllScootersResponse();
-            response.Scooters.AddRange(allScooters.Select(s => new Scooter
+            response.Scooters.AddRange(allScooters.Select(s => new ScooterMessage
             {
                 Id = s.Id.ToString(),
                 Model = s.Model,
@@ -64,7 +64,7 @@ namespace ScooterService.Services
 
         public override async Task<UpdateScooterStatusResponse> UpdateScooterStatus(UpdateScooterStatusRequest request, ServerCallContext context)
         {
-            bool success = await _repository.UpdateScooterStatusAsync(Guid.Parse(request.Id), request.Status);
+            bool success = await _repository.UpdateScooterStatusAsync(Guid.Parse(request.Id));
             return new UpdateScooterStatusResponse { IsSuccess = success };
         }
     }

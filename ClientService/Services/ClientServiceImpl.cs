@@ -3,50 +3,50 @@ using ClientService.Repositories;
 using Grpc.Core;
 using ClientService.Entities;
 using static ClientAccount.ClientService;
+using System.Security.Claims;
+using ClientService.Security;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using ClientService.Models;
+using ClientService.Auth;
+using Microsoft.AspNetCore.Identity;
 
 namespace ClientService.Services
 {
     public class ClientServiceImpl : ClientServiceBase
     {
         private readonly IClientRepository _clientRepository;
+        private readonly IPasswordHasher _passwordHasher;
 
-        public ClientServiceImpl(IClientRepository clientRepository)
+        public ClientServiceImpl(IClientRepository clientRepository, IPasswordHasher passwordHasher)
         {
             _clientRepository = clientRepository;
+            _passwordHasher = passwordHasher;
         }
 
-        public override async Task<AuthenticateClientResponse> AuthenticateClient(AuthenticateClientRequest request, ServerCallContext context)
+        /*public override async Task<AuthenticateClientResponse> AuthenticateClient(AuthenticateClientRequest request, ServerCallContext context)
         {
-            ClientEntity client = null;
+          
+        } */
 
-            if (IsValidEmail(request.Identifier))
+        public override async Task<RegisterClientResponse> RegisterClient(RegisterClientRequest request, ServerCallContext context)
+        {
+            var hashedPassword = _passwordHasher.Generate(request.Password);
+
+            Client client = Client.Create(request.UserName, hashedPassword, request.Email);
+
+            bool check = await _clientRepository.AddClient(client);
+
+            if (check)
             {
-                client = await _clientRepository.GetClientByEmail(request.Identifier);
+                return new RegisterClientResponse { IsSuccess = true, ErrorMessage = string.Empty };
             }
+
             else
             {
-                client = await _clientRepository.GetClientByUserName(request.Identifier);
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Unable to end a register a user"));
             }
 
-            if (client != null && client.password == request.Password)
-            {
-                return new AuthenticateClientResponse { IsSuccess = true };
-            }
-
-            return new AuthenticateClientResponse { IsSuccess = false, ErrorMessage = "Invalid credentials" };
-        }
-
-        private bool IsValidEmail(string email)
-        {
-            try
-            {
-                var addr = new System.Net.Mail.MailAddress(email);
-                return addr.Address == email;
-            }
-            catch
-            {
-                return false;
-            }
         }
 
     }

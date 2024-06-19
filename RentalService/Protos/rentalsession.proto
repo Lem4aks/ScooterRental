@@ -10,7 +10,7 @@ service RentalSessionService {
     rpc EndSession (EndSessionRequest) returns (EndSessionResponse);
 }
 
-message Session {
+message SessionMessage {
     string id = 1;  
     string clientId = 2;
     string scooterId = 3;
@@ -24,17 +24,17 @@ message GetSessionInfoRequest {
 }
 
 message GetSessionInfoResponse {
-    Session session = 1;
+    SessionMessage sessionMessage = 1;
 }
 
 message StartSessionRequest {
-    string id = 1;  
-    string clientId = 2;
-    string scooterId = 3;
+    string clientId = 1;
+    string scooterId = 2;
 }
 
 message StartSessionResponse {
     bool isSuccess = 1;
+    string sessionId = 2;
 }
 
 message EndSessionRequest {

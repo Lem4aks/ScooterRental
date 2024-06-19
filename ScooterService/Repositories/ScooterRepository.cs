@@ -41,7 +41,7 @@ namespace ScooterService.Repositories
             return true;
         }
 
-        public async Task<bool> UpdateScooterStatusAsync(Guid id, bool status)
+        public async Task<bool> UpdateScooterStatusAsync(Guid id)
         {
             ScooterEntity? scooter = await _context.Scooters.FindAsync(id);
             if (scooter == null)
@@ -49,10 +49,28 @@ namespace ScooterService.Repositories
                 return false;
             }
 
-            scooter!.Status = status;
+            scooter!.Status = true;
             _context.Scooters.Update(scooter);
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> AddSession(Guid sessionId, Guid scooterId)
+        {
+            ScooterEntity? scooterEntity = await _context.Scooters.FindAsync(scooterId);
+
+            if (scooterEntity == null)
+            {
+                return false;
+            }
+
+            scooterEntity.SessionIds.Add(sessionId);
+            scooterEntity.Status = false;
+
+            _context.Scooters.Update(scooterEntity);
+            await _context.SaveChangesAsync();
+
+            return true;
+    }
     }
 }

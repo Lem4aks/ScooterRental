@@ -9,8 +9,10 @@ namespace ScooterService.Repositories
 
         Task<bool> DeleteScooterAsync(Guid id);
 
-        Task<bool> UpdateScooterStatusAsync(Guid id, bool status);
+        Task<bool> UpdateScooterStatusAsync(Guid id);
 
         Task<List<ScooterEntity>> GetAllScooters();
+
+        Task<bool> AddSession(Guid sessionId, Guid scooterId);
     }
 }

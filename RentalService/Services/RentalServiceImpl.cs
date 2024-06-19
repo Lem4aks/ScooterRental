@@ -1,5 +1,6 @@
 ﻿using Grpc.Core;
 using RentalService.Entities;
+using RentalService.Models;
 using RentalService.Repositories;
 using RentalSession;
 
@@ -16,13 +17,13 @@ namespace RentalService.Services
 
         public override async Task<GetSessionInfoResponse> GetSessionInfo(GetSessionInfoRequest request, ServerCallContext context)
         {
-            SessionEntity session = await _repository.GetSessionInfo(Guid.Parse(request.Id));
+            Session session = await _repository.GetSessionInfo(Guid.Parse(request.Id));
 
             if (session != null)
             {
                 GetSessionInfoResponse response = new GetSessionInfoResponse
                 {
-                    Session = new Session
+                    SessionMessage = new SessionMessage
                     {
                         Id = session.Id.ToString(),
                         ClientId = session.ClientId.ToString(),
@@ -41,11 +42,10 @@ namespace RentalService.Services
         }
         public override async Task<StartSessionResponse> StartSession(StartSessionRequest request, ServerCallContext context)
         {
-            Guid sessionId = Guid.Parse(request.Id);
             Guid clientId = Guid.Parse(request.ClientId);
             Guid scooterId = Guid.Parse(request.ScooterId);
 
-            SessionEntity sessionToStart = await _repository.StartSession(sessionId, clientId, scooterId);
+            Session sessionToStart = await _repository.StartSession(clientId, scooterId);
 
             if (sessionToStart != null)
             {
@@ -54,7 +54,6 @@ namespace RentalService.Services
 
             else
             {
-
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "Unable to start a session, check the ID`s"));
             }
         }
@@ -63,7 +62,7 @@ namespace RentalService.Services
         {
             Guid sessionId = Guid.Parse(request.Id);
 
-            SessionEntity sessionToEnd = await _repository.EndSession(sessionId);
+            Session sessionToEnd = await _repository.EndSession(sessionId);
 
             if (sessionToEnd != null)
             {

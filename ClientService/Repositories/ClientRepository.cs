@@ -1,32 +1,87 @@
-﻿using ClientService.Data;
+﻿using ClientService.Models;
+using ClientService.Data;
 using ClientService.Entities;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace ClientService.Repositories
 {
     public class ClientRepository : IClientRepository
     {
         private readonly ClientDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ClientRepository(ClientDbContext context)
+        public ClientRepository(ClientDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<ClientEntity> GetClientByEmail(string email)
+        public async Task<Client> GetClientByEmail(string email)
         {
-            return await _context.Clients.FirstOrDefaultAsync(c => c.email == email);
+            ClientEntity clientEntity = await _context.Clients
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.email == email) ?? throw new Exception("Wrong email");
+
+            return _mapper.Map<Client>(clientEntity); 
         }
 
-        public async Task<ClientEntity> GetClientByUserName(string userName)
+        public async Task<Client> GetClientByUserName(string userName)
         {
-            return await _context.Clients.FirstOrDefaultAsync(c => c.userName == userName);
+            ClientEntity clientEntity = await _context.Clients
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.userName == userName) ?? throw new Exception("Wrong username");
+
+            return _mapper.Map<Client>(clientEntity);
         }
 
-        public async Task<bool> AddClient(ClientEntity client)
+        public async Task<bool> AddClient(Client client)
         {
-            _context.Clients.Add(client);
-            return await _context.SaveChangesAsync() > 0;
+            ClientEntity clientEntity = _mapper.Map<ClientEntity>(client);
+
+            await _context.Clients.AddAsync(clientEntity);
+            await _context.SaveChangesAsync();
+
+            var addedClientEntity = await _context.Clients.FindAsync(clientEntity.Id);
+
+            return addedClientEntity != null;
+
         }
+
+        public async Task<bool> AddSession(Guid clientId, Guid sessionId)
+        {
+            ClientEntity? clientEntity = await _context.Clients.FindAsync(clientId);
+
+            if (clientEntity == null)
+            {
+                return false;
+            }
+
+            clientEntity.SessionIds.Add(sessionId);
+
+            _context.Clients.Update(clientEntity);
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        /*public async Task<bool> RegisterClientAsync(Client client)
+        {
+            if (await _context.Clients.AnyAsync(c => c.email == client.email || c.userName == client.userName))
+            {
+                return false;
+            }
+
+            await _context.Clients.AddAsync(client);
+            await _context.SaveChangesAsync();
+            return true;
+        } */
+
+
+        /*public async Task<Client> AuthenticateClientAsync(string identifier, string password)
+        {
+            return await _context.Clients.FirstOrDefaultAsync(c => (c.email == identifier || c.userName == identifier) && c.password == password);
+        } */
     }
 }
