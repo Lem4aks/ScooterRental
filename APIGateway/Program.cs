@@ -52,7 +52,7 @@ namespace APIGateway
 
             app.UseAuthorization();
 
-
+            
 
             app.MapControllers();
 
