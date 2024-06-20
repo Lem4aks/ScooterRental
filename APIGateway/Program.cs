@@ -1,42 +1,63 @@
-using Ocelot.DependencyInjection;
-using Ocelot.Middleware;
-
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
-// Добавление контроллеров и Endpoints API Explorer
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-
-// Добавление Ocelot и SwaggerForOcelot
-builder.Services.AddOcelot();
-builder.Services.AddSwaggerForOcelot(builder.Configuration);
-
-// Загрузка конфигурации ocelot.json
-builder.Configuration.AddJsonFile("ocelot.json");
-// Настройка CORS
-builder.Services.AddCors(options =>
+using Grpc.Net.Client;
+using Grpc.Net.ClientFactory;
+using RentalSession;
+using ClientAccount;
+using ScooterInventoryGrpc;
+using APIGateway.Repositories;
+using APIGateway.Interfaces.Repositories;
+namespace APIGateway
 {
-    options.AddPolicy("CorsPolicy", builder => builder
-        .AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        .WithExposedHeaders("Content-Disposition"));
-});
-WebApplication app = builder.Build();
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
 
-// Настройка middleware
-app.UseHttpsRedirection();
-app.UseAuthorization();
-// Настройка CORS
-app.UseCors("CorsPolicy");
-// Настройка SwaggerForOcelot UI
-app.UseSwaggerForOcelotUI(options =>
-{
-    options.PathToSwaggerGenerator = "/swagger/docs";
-});
+            // Add services to the container.
 
-app.MapControllers();
+            builder.Services.AddControllers();
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-// Запуск Ocelot
-await app.UseOcelot();
-await app.RunAsync();
+            builder.Services.AddScoped<IClientRepository, ClientRepository>();
+            builder.Services.AddScoped<IScooterRepository, ScooterRepository>();
+            builder.Services.AddScoped<ISessionRepository, SessionRepository>();
+
+            builder.Services.AddGrpcClient<ClientService.ClientServiceClient>(o =>
+            {
+                o.Address = new Uri("https://localhost:5002");
+            });
+
+            builder.Services.AddGrpcClient<RentalSessionService.RentalSessionServiceClient>(o =>
+            {
+                o.Address = new Uri("https://localhost:5004");
+            });
+
+            builder.Services.AddGrpcClient<ScooterInventoryService.ScooterInventoryServiceClient>(o =>
+            {
+                o.Address = new Uri("https://localhost:5006");
+            });
+
+            var app = builder.Build();
+
+            // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+            app.UseHttpsRedirection();
+
+            app.UseAuthorization();
+
+            
+
+            app.MapControllers();
+
+
+            app.Run();
+        }
+    }
+}

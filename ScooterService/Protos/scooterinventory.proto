@@ -7,30 +7,38 @@ package ScooterInventory;
 service ScooterInventoryService {
     rpc GetAvailableScooters (GetAvailableScootersRequest) returns (GetAvailableScootersResponse);
     rpc AddScooter (AddScooterRequest) returns (AddScooterResponse);
-    rpc DeleteAScooter (DeleteScooterRequest) returns (DeleteScooterResponse);
+    rpc DeleteScooter (DeleteScooterRequest) returns (DeleteScooterResponse);
     rpc UpdateScooterStatus (UpdateScooterStatusRequest) returns (UpdateScooterStatusResponse);
     rpc GetAllScooters (GetAllScootersRequest) returns (GetAllScootersResponse);
+    rpc AddSession (AddSessionRequest) returns (AddSessionResponse);
 }
 
-message Scooter {
+message ScooterMessage {
     string id = 1;
     string model = 2;
     bool status = 3;
     repeated string sessionIds = 4;
 }
 
+message AddSessionRequest {
+    string sessionId = 1;
+    string scooterId = 2;
+}
+
+message AddSessionResponse {
+    bool isSuccess = 1;
+}
 message AddScooterRequest {
-    Scooter scooter = 1;
+    string model = 1;
 }
 message GetAllScootersRequest {}
 
 message GetAllScootersResponse {
-    repeated Scooter scooters = 1;
+    repeated ScooterMessage scooters = 1;
 }
 
 message UpdateScooterStatusRequest {
     string id = 1;
-    bool status = 2;
 }
 
 message UpdateScooterStatusResponse {
@@ -39,7 +47,7 @@ message UpdateScooterStatusResponse {
 }
 
 message GetAvailableScootersResponse {
-    repeated Scooter scooters = 1;
+    repeated ScooterMessage scooters = 1;
 }
 
 message GetAvailableScootersRequest {}

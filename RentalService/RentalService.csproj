@@ -6,14 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 	<ItemGroup>
-		<Protobuf Include="..\ClientSevice\Protos\clientaccount.proto" GrpcServices="None" ProtoCompile="False">
-			<Link>ClientService\Protos\clientaccount.proto</Link>
-		</Protobuf>
-		<Protobuf Include="..\ScooterService\Protos\scooterinventory.proto" GrpcServices="None" ProtoCompile="False">
-			<Link>ScooterService\Protos\scooterinventory.proto</Link>
-		</Protobuf>
+		<Protobuf Include="Protos\rentalsession.proto" GrpcServices="Server" />
 	</ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Google.Protobuf" Version="3.27.1" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.57.0" />
     <PackageReference Include="Grpc.Core" Version="2.46.6" />
@@ -28,12 +24,6 @@
     </PackageReference>
     <PackageReference Include="Npgsql" Version="8.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ClientService\ClientService.csproj" />
-    <ProjectReference Include="..\ScooterService\ScooterService.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Migrations\" />
     <Folder Include="Protos\" />
   </ItemGroup>

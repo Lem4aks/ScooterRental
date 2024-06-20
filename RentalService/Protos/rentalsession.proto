@@ -4,13 +4,43 @@ option csharp_namespace = "RentalSession";
 
 package RentalSession;
 
-service RentalSessionService {}
+service RentalSessionService {
+    rpc GetSessionInfo (GetSessionInfoRequest) returns (GetSessionInfoResponse);
+    rpc StartSession (StartSessionRequest) returns (StartSessionResponse);
+    rpc EndSession (EndSessionRequest) returns (EndSessionResponse);
+}
 
-message Session {
+message SessionMessage {
     string id = 1;  
     string clientId = 2;
     string scooterId = 3;
     string startTime = 4;   
     string endTime = 5;     
     double rentalCost = 6;  
+}
+
+message GetSessionInfoRequest {
+    string id = 1;
+}
+
+message GetSessionInfoResponse {
+    SessionMessage sessionMessage = 1;
+}
+
+message StartSessionRequest {
+    string clientId = 1;
+    string scooterId = 2;
+}
+
+message StartSessionResponse {
+    bool isSuccess = 1;
+    string sessionId = 2;
+}
+
+message EndSessionRequest {
+    string id = 1;
+}
+
+message EndSessionResponse {
+    bool isSuccess = 1;
 }
