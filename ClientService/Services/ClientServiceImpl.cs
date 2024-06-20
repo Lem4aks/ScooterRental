@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using ClientService.Models;
 using ClientService.Auth;
 using Microsoft.AspNetCore.Identity;
+using ClientService.JWT;
 
 namespace ClientService.Services
 {
@@ -17,17 +18,35 @@ namespace ClientService.Services
     {
         private readonly IClientRepository _clientRepository;
         private readonly IPasswordHasher _passwordHasher;
+        private readonly IJwtProvider _jwtProvider;
 
-        public ClientServiceImpl(IClientRepository clientRepository, IPasswordHasher passwordHasher)
+        public ClientServiceImpl(
+            IClientRepository clientRepository, 
+            IPasswordHasher passwordHasher,
+            IJwtProvider jwtProvider)
+            
         {
             _clientRepository = clientRepository;
             _passwordHasher = passwordHasher;
+            _jwtProvider = jwtProvider;
         }
 
-        /*public override async Task<AuthenticateClientResponse> AuthenticateClient(AuthenticateClientRequest request, ServerCallContext context)
+        public override async Task<AuthenticateClientResponse> AuthenticateClient(AuthenticateClientRequest request, ServerCallContext context)
         {
-          
-        } */
+          Client client = await _clientRepository.GetClientByEmail(request.Identifier);
+
+
+          var result = _passwordHasher.Verify(request.Password, client.password);
+
+            if (result == false)
+            {
+                throw new Exception("Failed to login");
+            }
+
+            var token = _jwtProvider.GenerateToken(client);
+
+            return new AuthenticateClientResponse { IsSuccess = true, Token = token };
+        } 
 
         public override async Task<RegisterClientResponse> RegisterClient(RegisterClientRequest request, ServerCallContext context)
         {

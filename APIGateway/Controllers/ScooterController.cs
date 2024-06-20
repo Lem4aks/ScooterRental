@@ -40,5 +40,14 @@ namespace APIGateway.Controllers
 
             return Ok();
         }
+
+        [HttpPatch]
+
+        public async Task<IActionResult> AddSession(Guid scooterId, Guid sessionId)
+        {
+            await _repository.AddSession(scooterId, sessionId);
+
+            return Ok();
+        }
     }
 }

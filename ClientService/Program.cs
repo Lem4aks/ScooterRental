@@ -9,6 +9,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using ClientService.Security;
+using ClientService.JWT;
+using ClientService.Auth;
 
 namespace ClientService
 {
@@ -21,21 +23,11 @@ namespace ClientService
 
             builder.Services.AddAutoMapper(typeof(DataBaseMappings));
             builder.Services.AddAuthorization();
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidIssuer = AuthOptions.ISSUER,
-                        ValidateAudience = true,
-                        ValidAudience = AuthOptions.AUDIENCE,
-                        ValidateLifetime = true,
-                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                        ValidateIssuerSigningKey = true,
-                    };
-                });
+            builder.Services.AddAuthentication();
+            builder.Services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions))); 
             builder.Services.AddGrpc();
+            builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+            builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
             builder.Services.AddScoped<IClientRepository, ClientRepository>();
             builder.Services.AddDbContext<ClientDbContext>(
                 options =>

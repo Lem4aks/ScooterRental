@@ -66,17 +66,19 @@ namespace ClientService.Repositories
             return true;
         }
 
-        /*public async Task<bool> RegisterClientAsync(Client client)
+        public async Task<bool> RegisterClientAsync(Client client)
         {
             if (await _context.Clients.AnyAsync(c => c.email == client.email || c.userName == client.userName))
             {
                 return false;
             }
 
-            await _context.Clients.AddAsync(client);
+            ClientEntity clientEntity = _mapper.Map<ClientEntity>(client);
+
+            await _context.Clients.AddAsync(clientEntity);
             await _context.SaveChangesAsync();
             return true;
-        } */
+        } 
 
 
         /*public async Task<Client> AuthenticateClientAsync(string identifier, string password)
