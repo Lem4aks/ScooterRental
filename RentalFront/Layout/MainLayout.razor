@@ -1,6 +1,8 @@
 ﻿@using System.ComponentModel.DataAnnotations
+@inject HttpClient HttpClient
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 @if (isAuthenticated)
 {
@@ -19,7 +21,7 @@
                 </div>
                 <div class="dropdown" @onclick="ToggleDropdown" style="position: relative;">
                     <button class="btn btn-secondary dropdown-toggle">
-                        @currentUser
+                        @curName
                     </button>
                     <div class="@($"dropdown-menu {(dropdownOpen ? "show" : "")}")" style="position: absolute; right: 0;">
                         <a class="dropdown-item" @onclick="Logout">Вихід</a>
@@ -33,26 +35,61 @@
         </main>
     </div>
 }
-else
+else if (notregister)
 {
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <h3 class="text-center">Авторизація користувача</h3>
 
-                <EditForm Model="@user" OnValidSubmit="HandleValidSubmit">
+                <EditForm Model="@loginUser" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Пароль:</label>
+                        <InputText id="password" type="password" class="form-control" @bind-Value="loginUser.Password" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Пошта:</label>
+                        <InputText id="email" class="form-control" @bind-Value="loginUser.Email" />
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary w-100">Авторизація</button>
+                    </div>
+                    <div class="mb-3">
+                        <button class="btn btn-primary w-100" @onclick="Register">Зареєструватися</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+
+}
+else
+{
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h3 class="text-center">Реєстрація нового користувача</h3>
+
+                <EditForm Model="@userR" class="mt-4" OnValidSubmit="Registers">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
 
                     <div class="mb-3">
                         <label for="username" class="form-label">Логін користувача:</label>
-                        <InputText id="username" class="form-control" @bind-Value="user.Username" />
+                        <InputText id="username" class="form-control" @bind-Value="userR.Username" />
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Пароль:</label>
-                        <InputText id="password" type="password" class="form-control" @bind-Value="user.Password" />
+                        <InputText id="password" type="password" class="form-control" @bind-Value="userR.Password" />
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Авторизація</button>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Пошта:</label>
+                        <InputText id="email" class="form-control" @bind-Value="userR.Email" />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Зареєструватися</button>
                 </EditForm>
             </div>
         </div>
@@ -61,11 +98,24 @@ else
 
 @code {
     private bool isAuthenticated = false;
+    private bool notregister = true;
     private bool dropdownOpen = false;
-    private string currentUser;
-    private User user = new User();
+    private string curName;
+    private LoginUser loginUser = new LoginUser();
+    private RegisterUser userR = new RegisterUser();
 
-    public class User
+    public class LoginUser
+    {
+        [Required(ErrorMessage = "Пароль є обов'язковим")]
+        [MinLength(6, ErrorMessage = "Пароль повинен містити щонайменше 6 символів")]
+        public string Password { get; set; }
+
+        [Required(ErrorMessage = "Пошта є обов'язковою")]
+        [EmailAddress(ErrorMessage = "Невірний формат пошти")]
+        public string Email { get; set; }
+    }
+
+    public class RegisterUser
     {
         [Required(ErrorMessage = "Логін користувача є обов'язковим")]
         public string Username { get; set; }
@@ -73,6 +123,16 @@ else
         [Required(ErrorMessage = "Пароль є обов'язковим")]
         [MinLength(6, ErrorMessage = "Пароль повинен містити щонайменше 6 символів")]
         public string Password { get; set; }
+
+        [Required(ErrorMessage = "Пошта є обов'язковою")]
+        [EmailAddress(ErrorMessage = "Невірний формат пошти")]
+        public string Email { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        curName = await LocalStorage.GetItemAsync<string>("curName");
+        isAuthenticated = !string.IsNullOrEmpty(curName);
     }
 
     private void ToggleDropdown()
@@ -80,22 +140,52 @@ else
         dropdownOpen = !dropdownOpen;
     }
 
-    private void Logout()
+    private void Register()
     {
-        isAuthenticated = false;
-        currentUser = null;
-        Navigation.NavigateTo("/login");
+        notregister = !notregister;
     }
 
     private async Task HandleValidSubmit()
     {
-        isAuthenticated = true;
-        if (user.Username == "test" && user.Password == "password")
+        var response = await HttpClient.PostAsJsonAsync($"/api/v1/client/Login?email={loginUser.Email}&password={loginUser.Password}", (loginUser.Email, loginUser.Password));
+        if (response.IsSuccessStatusCode)
         {
+            var clientDto = await response.Content.ReadFromJsonAsync<ClientDto>();
+            curName = clientDto.UserName;
+            await LocalStorage.SetItemAsync("curName", curName);
             isAuthenticated = true;
-            currentUser = user.Username;
-            Navigation.NavigateTo("/");
         }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+        }
+    }
+
+    private async Task Registers()
+    {
+        var response = await HttpClient.PostAsJsonAsync($"/api/v1/client/Register?userName={userR.Username}&password={userR.Password}&email={userR.Email}", (userR.Username, userR.Email, userR.Password));
+        if (response.IsSuccessStatusCode)
+        {
+            notregister = true;
+        }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+        }
+    }
+
+    private async Task Logout()
+    {
+        isAuthenticated = false;
+        await LocalStorage.ClearAsync();
+    }
+
+    public class ClientDto
+    {
+        public string UserName { get; set; }
+        public List<Guid> SessionIds { get; set; }
     }
 }
 
+
+       
