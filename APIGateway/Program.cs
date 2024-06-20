@@ -40,6 +40,14 @@ namespace APIGateway
                 o.Address = new Uri("https://localhost:5006");
             });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder => builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .WithExposedHeaders("Content-Disposition"));
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -52,7 +60,7 @@ namespace APIGateway
 
             app.UseAuthorization();
 
-            
+            app.UseCors("CorsPolicy");
 
             app.MapControllers();
 
