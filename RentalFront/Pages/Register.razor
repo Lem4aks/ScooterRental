@@ -1,6 +1,6 @@
 ﻿@page "/register"
 @using System.ComponentModel.DataAnnotations
-
+@inject NavigationManager Navigation
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -43,8 +43,9 @@
         [EmailAddress(ErrorMessage = "Невірний формат пошти")]
         public string Emaill { get; set; }
     }
+
     private async Task HandleValidSubmit()
     {
-        // gRPC
+        Navigation.NavigateTo("/");
     }
 }

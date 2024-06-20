@@ -1,9 +1,9 @@
-﻿@page "/list"
+﻿@page "/List"
 @using System.Net.Http
 @using System.Net.Http.Json
 @inject HttpClient HttpClient
 
-<h3>Доступні транспортні засоби для прокату</h3>
+<h3>Доступні Самокати для прокату</h3>
 <style>
     body::before {
         content: "";
@@ -19,36 +19,44 @@
         opacity: 0.5;
         z-index: -1;
     }
+
+    .bold-line th {
+        border-bottom: 3px solid black;
+    }
+    .bold-text {
+        font-weight: bold;
+        border-bottom: 3px solid black;
+    }
 </style>
 @if (scooters == null)
 {
-    <p>Loading...</p>
+    <p>Завнтаження...</p>
 }
 else if (!scooters.Any())
 {
-    <p>No scooters available for rental.</p>
+    <p>Самокати недоступні для прокату.</p>
 }
 else
 {
     <table class="table">
-        <thead>
+        <thead class="bold-line">
             <tr>
                 <th>ID</th>
-                <th>Model</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th>Модель</th>
+                <th>Статус</th>
+                <th>Дії</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var scooter in scooters)
             {
                 <tr>
-                    <td>@scooter.Id</td>
-                    <td>@scooter.Model</td>
-                    <td>@(scooter.Status ? "Доступен" : "Недоступен")</td>
-                    <td>
-                        <button class="btn btn-success" @onclick="() => OrderScooter(scooter.Id)">Заказать</button>
-                        <button class="btn btn-danger ml-2" @onclick="() => RemoveScooter(scooter.Id)">Удалить</button>
+                    <td class="bold-text">@scooter.Id</td>
+                    <td class="bold-text">@scooter.Model</td>
+                    <td class="bold-text">@(scooter.Status ? "Доступно" : "Недоступно")</td>
+                    <td class="bold-text">
+                        <button class="btn btn-success" @onclick="() => OrderScooter(scooter.Id)">Замовити</button>
+                        <button class="btn btn-danger ml-2" @onclick="() => RemoveScooter(scooter.Id)">Видалити</button>
                     </td>
                 </tr>
             }
@@ -56,9 +64,9 @@ else
     </table>
 
     <div class="input-group mt-3">
-        <input type="text" @bind="newScooterModel" placeholder="Введите модель скутера" class="form-control" />
+        <input type="text" @bind="newScooterModel" placeholder="Введіть модель скутера" class="form-control" />
         <div class="input-group-append">
-            <button class="btn btn-primary" @onclick="AddScooter">Добавить</button>
+            <button class="btn btn-primary" @onclick="AddScooter">Додати</button>
         </div>
     </div>
 }
@@ -77,7 +85,7 @@ else
     {
         try
         {
-            scooters = await HttpClient.GetFromJsonAsync<List<Scooter>>("api/v1/scooter?available=true");
+            scooters = await HttpClient.GetFromJsonAsync<List<Scooter>>("/api/v1/scooter");
         }
         catch (Exception ex)
         {
@@ -90,7 +98,7 @@ else
     {
         try
         {
-            await HttpClient.DeleteAsync($"api/v1/scooter/{id}");
+            await HttpClient.DeleteAsync($"/api/v1/scooter?id={id}");
             await LoadScooters();
         }
         catch (Exception ex)
@@ -106,15 +114,9 @@ else
             return;
         }
 
-        var newScooter = new Scooter
-            {
-                Model = newScooterModel,
-                Status = true,
-            };
-
         try
         {
-            await HttpClient.PostAsJsonAsync("api/v1/scooter", newScooter);
+            await HttpClient.PostAsJsonAsync($"/api/v1/scooter?model={newScooterModel}", newScooterModel);
             await LoadScooters();
             newScooterModel = "";
         }

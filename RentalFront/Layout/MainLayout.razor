@@ -1,49 +1,79 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.ComponentModel.DataAnnotations
+@inherits LayoutComponentBase
 @inject NavigationManager Navigation
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+@if (isAuthenticated)
+{
+    <div class="page">
+        <div class="sidebar">
+            <NavMenu />
+        </div>
 
-    <main>
-        <div class="top-row px-4 d-flex align-items-center">
-            @if (user != null)
-            {
+        <main>
+            <div class="top-row px-4 d-flex align-items-center">
                 <div class="out_inf">
                     <span>Поч</span>
                     <span>Пот</span>
                     <span>Зав</span>
                     <span>Ціна</span>
-                </div> @* это временное решение ждём бд *@
+                </div>
                 <div class="dropdown" @onclick="ToggleDropdown" style="position: relative;">
                     <button class="btn btn-secondary dropdown-toggle">
-                        @user
+                        @currentUser
                     </button>
                     <div class="@($"dropdown-menu {(dropdownOpen ? "show" : "")}")" style="position: absolute; right: 0;">
-                        <a class="dropdown-item" @onclick="Logout">Logout</a>
-                        <a class="dropdown-item" href="/change-password">Change Password</a>
+                        <a class="dropdown-item" @onclick="Logout">Вихід</a>
                     </div>
                 </div>
-            }
-            else
-            {
-                <div style="margin-left: auto;">
-                    <a class="btn btn-primary" href="/login">Login</a>
-                    <a class="btn btn-secondary ml-2" href="/register">Register</a>
-                </div>
-            }
-        </div>
+            </div>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+            <article class="content px-4">
+                @Body
+            </article>
+        </main>
+    </div>
+}
+else
+{
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h3 class="text-center">Авторизація користувача</h3>
+
+                <EditForm Model="@user" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Логін користувача:</label>
+                        <InputText id="username" class="form-control" @bind-Value="user.Username" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Пароль:</label>
+                        <InputText id="password" type="password" class="form-control" @bind-Value="user.Password" />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Авторизація</button>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
-    private string user="s";
+    private bool isAuthenticated = false;
     private bool dropdownOpen = false;
+    private string currentUser;
+    private User user = new User();
+
+    public class User
+    {
+        [Required(ErrorMessage = "Логін користувача є обов'язковим")]
+        public string Username { get; set; }
+
+        [Required(ErrorMessage = "Пароль є обов'язковим")]
+        [MinLength(6, ErrorMessage = "Пароль повинен містити щонайменше 6 символів")]
+        public string Password { get; set; }
+    }
 
     private void ToggleDropdown()
     {
@@ -52,5 +82,20 @@
 
     private void Logout()
     {
+        isAuthenticated = false;
+        currentUser = null;
+        Navigation.NavigateTo("/login");
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        isAuthenticated = true;
+        if (user.Username == "test" && user.Password == "password")
+        {
+            isAuthenticated = true;
+            currentUser = user.Username;
+            Navigation.NavigateTo("/");
+        }
     }
 }
+

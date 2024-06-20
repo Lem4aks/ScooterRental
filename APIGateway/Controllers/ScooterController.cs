@@ -1,5 +1,6 @@
 ﻿using APIGateway.Interfaces.Repositories;
 using APIGateway.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIGateway.Controllers

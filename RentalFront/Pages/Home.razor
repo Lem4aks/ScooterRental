@@ -1,28 +1,6 @@
-﻿@page "/"
+﻿@page "/home"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 
-<PageTitle>Home</PageTitle>
-<style>
-
-    body::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url('4357616.png');
-        background-repeat: no-repeat;
-        background-position: center;
-        filter: blur(1px);
-        opacity: 0.5;
-        z-index: -1;
-    }
-
-</style>
-
-<div class="content">
-    <h1>Системa прокату електросамокатів</h1>
-    <a href="https://github.com/Lem4aks">Волович</a>
-    <a href="https://github.com/AlexanderSemenuk">Семенюк</a>
-    <a href="#">Максим</a>
-</div>
+<h3>Welcome to the protected page!</h3>
+<p>You are logged in.</p>
