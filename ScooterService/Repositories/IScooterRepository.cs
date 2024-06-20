@@ -14,6 +14,8 @@ namespace ScooterService.Repositories
 
         Task<List<Scooter>> GetAllScooters();
 
+        Task<string> GetScooterModel(Guid id);
+
         Task<bool> AddSession(Guid sessionId, Guid scooterId);
     }
 }

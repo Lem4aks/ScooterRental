@@ -56,6 +56,18 @@ namespace ScooterService.Repositories
             return true;
         }
 
+        public async Task<string> GetScooterModel(Guid id)
+        {
+            ScooterEntity? scooterEntity = await _context.Scooters.FindAsync(id);
+            if (scooterEntity == null)
+            {
+                throw new Exception("No scooter under such ID");
+            }
+            Scooter scooter = _mapper.Map<Scooter>(scooterEntity);
+
+            return scooter.Model!;
+        }
+
         public async Task<bool> UpdateScooterStatusAsync(Guid id)
         {
             ScooterEntity? scooter = await _context.Scooters.FindAsync(id);
