@@ -27,17 +27,17 @@ namespace APIGateway
 
             builder.Services.AddGrpcClient<ClientService.ClientServiceClient>(o =>
             {
-                o.Address = new Uri("https://localhost:5001");
-            });
-
-            builder.Services.AddGrpcClient<ScooterInventoryService.ScooterInventoryServiceClient>(o =>
-            {
                 o.Address = new Uri("https://localhost:5002");
             });
 
             builder.Services.AddGrpcClient<RentalSessionService.RentalSessionServiceClient>(o =>
             {
-                o.Address = new Uri("https://localhost:5003");
+                o.Address = new Uri("https://localhost:5004");
+            });
+
+            builder.Services.AddGrpcClient<ScooterInventoryService.ScooterInventoryServiceClient>(o =>
+            {
+                o.Address = new Uri("https://localhost:5006");
             });
 
             var app = builder.Build();
