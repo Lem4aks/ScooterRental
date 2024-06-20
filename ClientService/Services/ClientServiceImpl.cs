@@ -31,6 +31,33 @@ namespace ClientService.Services
             _jwtProvider = jwtProvider;
         }
 
+        public override async Task<GetClientInfoResponse> GetClientInfo(GetClientInfoRequest request, ServerCallContext context)
+        {
+            Client client = await _clientRepository.GetClientByEmail(request.Identifier);
+
+            if (client == null)
+            {
+                throw new RpcException(new Status(StatusCode.NotFound, "Client not found"));
+            }
+
+            ClientMessage clientMessage = new ClientMessage
+            {
+                Email = client.email,
+                UserName = client.userName,
+                Password = client.password,
+            };
+
+            clientMessage.SessionIds.AddRange(client.SessionIds.Select(id => id.ToString()));
+            GetClientInfoResponse response = new GetClientInfoResponse
+            {
+                Client = clientMessage
+            };
+
+            return response;
+
+            
+        }
+
         public override async Task<AuthenticateClientResponse> AuthenticateClient(AuthenticateClientRequest request, ServerCallContext context)
         {
           Client client = await _clientRepository.GetClientByEmail(request.Identifier);

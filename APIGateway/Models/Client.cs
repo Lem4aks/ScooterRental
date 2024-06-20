@@ -1,6 +1,6 @@
 ﻿namespace APIGateway.Models
 {
-    public class User
+    public class Client
     {
         public Guid Id { get; set; }
 
@@ -10,6 +10,6 @@
 
         public string email { get; set; }
 
-        public List<Guid> SessionIds { get; set; } = new List<Guid>();
+        public List<Guid> SessionIds { get; set; }
     }
 }

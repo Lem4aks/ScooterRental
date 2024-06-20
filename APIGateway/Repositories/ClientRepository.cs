@@ -1,6 +1,7 @@
 ﻿using static ClientAccount.ClientService;
 using AutoMapper;
 using ClientAccount;
+using APIGateway.Models;
 using APIGateway.Interfaces.Repositories;
 
 
@@ -53,5 +54,24 @@ namespace APIGateway.Repositories
 
             return response.Token;
         }
+
+        public async Task<ClientDto> GetPersonalCabinet(string email)
+        {
+            GetClientInfoRequest request = new GetClientInfoRequest
+            {
+                Identifier = email,
+            };
+
+            GetClientInfoResponse response = await _client.GetClientInfoAsync(request);
+
+            Client client = _mapper.Map<Client>(response);
+
+            return new ClientDto
+            {
+                userName = client.userName,
+                SessionIds = client.SessionIds,
+            };
+
+        } 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using APIGateway.Interfaces.Repositories;
 using APIGateway.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIGateway.Controllers
@@ -14,6 +15,7 @@ namespace APIGateway.Controllers
             _repository = repository;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetScooters()
         {
@@ -23,6 +25,7 @@ namespace APIGateway.Controllers
         }
 
 
+        [Authorize]
         [HttpPost]
 
         public async Task<IActionResult> AddScooter(string model)

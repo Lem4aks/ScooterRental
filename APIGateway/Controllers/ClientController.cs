@@ -1,5 +1,6 @@
 ﻿using APIGateway.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using APIGateway.Models;
 
 namespace APIGateway.Controllers
 {
@@ -28,7 +29,11 @@ namespace APIGateway.Controllers
         {
             var token = await _repository.Login(email, password);
 
-            return Ok(token);
+            Response.Cookies.Append("cookies", token);
+
+            ClientDto clientDto = await _repository.GetPersonalCabinet(email);
+
+            return Ok(clientDto);
         }
 
     }

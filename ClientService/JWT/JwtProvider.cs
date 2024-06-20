@@ -20,11 +20,6 @@ namespace ClientService.JWT
                 new Claim("clientId", client.Id.ToString())
             };
 
-            foreach (var sessionId in client.SessionIds)
-            {
-                claims.Add(new Claim("sessionId", sessionId.ToString()));
-            }
-
             var signingCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey)),
                 SecurityAlgorithms.HmacSha256);
