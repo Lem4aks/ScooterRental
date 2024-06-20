@@ -1,6 +1,6 @@
 ﻿using APIGateway.Interfaces.Repositories;
 using APIGateway.Models;
-using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIGateway.Controllers
@@ -15,6 +15,7 @@ namespace APIGateway.Controllers
             _repository = repository;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetScooters()
         {
@@ -24,6 +25,7 @@ namespace APIGateway.Controllers
         }
 
 
+        [Authorize]
         [HttpPost]
 
         public async Task<IActionResult> AddScooter(string model)
@@ -38,6 +40,15 @@ namespace APIGateway.Controllers
         public async Task<IActionResult> RemoveScooter(Guid id)
         {
             await _repository.RemoveScooter(id);
+
+            return Ok();
+        }
+
+        [HttpPatch]
+
+        public async Task<IActionResult> AddSession(Guid scooterId, Guid sessionId)
+        {
+            await _repository.AddSession(scooterId, sessionId);
 
             return Ok();
         }

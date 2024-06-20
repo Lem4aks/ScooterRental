@@ -7,12 +7,14 @@ package ClientAccount;
 service ClientService {
   rpc RegisterClient(RegisterClientRequest) returns (RegisterClientResponse);
   rpc AuthenticateClient(AuthenticateClientRequest) returns (AuthenticateClientResponse);
+  rpc GetClientInfo (GetClientInfoRequest) returns (GetClientInfoResponse);
 }
 
 message ClientMessage  {
 	string email = 1;
 	string userName = 2;
 	string password = 3;
+	repeated string sessionIds = 4;
 }
 message RegisterClientRequest {
   string email = 1;
@@ -26,12 +28,19 @@ message RegisterClientResponse {
 }
 
 message AuthenticateClientRequest {
-  string identifier = 1; // email or username
+  string identifier = 1; 
   string password = 2;
 }
 
 message AuthenticateClientResponse {
   bool isSuccess = 1;
-  string errorMessage = 2;
-  string token = 3;
+  string token = 2;
+}
+
+message GetClientInfoRequest {
+	string identifier = 1;
+}
+
+message GetClientInfoResponse {
+	ClientMessage client = 1;
 }
