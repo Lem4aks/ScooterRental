@@ -69,6 +69,7 @@ namespace APIGateway.Repositories
 
             return new ClientDto
             {
+                Id = client.Id,
                 userName = client.userName,
                 SessionIds = client.SessionIds,
             };

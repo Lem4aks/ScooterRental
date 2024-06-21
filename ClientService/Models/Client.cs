@@ -11,7 +11,7 @@ namespace ClientService.Models
             this.email = email;
             SessionIds = new List<Guid>();
         }
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
 
         public string? userName { get; set; }
 

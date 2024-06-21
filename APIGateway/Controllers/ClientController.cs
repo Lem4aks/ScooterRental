@@ -45,6 +45,7 @@ namespace APIGateway.Controllers
             clientDto.Id = id;
 
             clientDto.Token = token;
+            clientDto.Id = id;
 
             return Ok(clientDto);
         }

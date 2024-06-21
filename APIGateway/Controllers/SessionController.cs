@@ -32,7 +32,7 @@ namespace APIGateway.Controllers
                 rentals.Add(new Rental
                 {
                     Id = sessionId,
-                    ScooterModel = await _scooterRepository.GetScooterModel(sessionId),
+                    ScooterModel = await _scooterRepository.GetScooterModel(session.ScooterId),
                     StartTime = session.StartTime,
                     EndTime = session.EndTime,
                     RentalCost = session.RentalCost,    
