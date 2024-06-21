@@ -44,10 +44,11 @@ message AuthenticateClientRequest {
 message AuthenticateClientResponse {
   bool isSuccess = 1;
   string token = 2;
+  string errorMessage = 3;
 }
 
 message GetClientInfoRequest {
-	string identifier = 1;
+	string id = 1;
 }
 
 message GetClientInfoResponse {

@@ -82,6 +82,15 @@ namespace APIGateway.Repositories
             }
         }
 
+        public async Task<string> GetScooterModel(Guid scooterId)
+        {
+            GetScooterModelRequest request = new GetScooterModelRequest { Id = scooterId.ToString() };
+
+            GetScooterModelResponse response = await _scooterClient.GetScooterModelAsync(request);
+
+            return response.Model;
+        }
+
         public async Task AddSession(Guid scooterId, Guid sessionId)
         {
             AddSessionRequest request = new AddSessionRequest
