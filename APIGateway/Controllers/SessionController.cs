@@ -59,7 +59,6 @@ namespace APIGateway.Controllers
 
             return Ok("Session started");
         }
-        [HttpPost("EndSession")]
 
         public async Task<IActionResult> EndSession(Guid rentalId)
         {
