@@ -46,6 +46,7 @@ namespace APIGateway.Controllers
             return Ok(rentals);
         }
 
+        
         [HttpPost("StartSession")]
 
         public async Task<IActionResult> StartSession(Guid clientId, Guid scooterId)
@@ -60,6 +61,8 @@ namespace APIGateway.Controllers
             return Ok("Session started");
         }
 
+
+        [HttpPost("EndSession")]
         public async Task<IActionResult> EndSession(Guid rentalId)
         {
             bool check = await _sessionRepository.EndSession(rentalId);

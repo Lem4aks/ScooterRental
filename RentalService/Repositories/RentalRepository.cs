@@ -61,7 +61,7 @@ namespace RentalService.Repositories
             {
                 throw new SessionNotFoundException($"No session found with ID: {sessionId}");
             }
-            sessionToEnd!.EndTime = endTime.DateTime;
+            sessionToEnd!.EndTime = endTime.DateTime.ToUniversalTime();
 
             TimeSpan rentalDuration = sessionToEnd.EndTime.Value - sessionToEnd.StartTime;
 
