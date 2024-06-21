@@ -11,6 +11,7 @@ service ScooterInventoryService {
     rpc UpdateScooterStatus (UpdateScooterStatusRequest) returns (UpdateScooterStatusResponse);
     rpc GetAllScooters (GetAllScootersRequest) returns (GetAllScootersResponse);
     rpc AddSession (AddSessionRequest) returns (AddSessionResponse);
+    rpc GetScooterModel (GetScooterModelRequest) returns (GetScooterModelResponse);
 }
 
 message ScooterMessage {
@@ -18,6 +19,14 @@ message ScooterMessage {
     string model = 2;
     bool status = 3;
     repeated string sessionIds = 4;
+}
+
+message GetScooterModelRequest {
+    string id = 1;
+}
+
+message GetScooterModelResponse {
+    string model = 1;
 }
 
 message AddSessionRequest {

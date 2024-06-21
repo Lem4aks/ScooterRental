@@ -79,5 +79,16 @@ namespace ScooterService.Services
             bool success = await _repository.UpdateScooterStatusAsync(Guid.Parse(request.Id));
             return new UpdateScooterStatusResponse { IsSuccess = success };
         }
+
+        public override async Task<GetScooterModelResponse> GetScooterModel(GetScooterModelRequest request, ServerCallContext context)
+        {
+            string scooterModel = await _repository.GetScooterModel(Guid.Parse(request.Id));
+            if (string.IsNullOrEmpty(scooterModel))
+            {
+                throw new RpcException(new Status(StatusCode.NotFound, "Scooter model under such ID is not found"));
+            }
+            return new GetScooterModelResponse { Model = scooterModel };
+
+        }
     }
 }

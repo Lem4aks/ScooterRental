@@ -8,6 +8,7 @@ service ClientService {
   rpc RegisterClient(RegisterClientRequest) returns (RegisterClientResponse);
   rpc AuthenticateClient(AuthenticateClientRequest) returns (AuthenticateClientResponse);
   rpc GetClientInfo (GetClientInfoRequest) returns (GetClientInfoResponse);
+  rpc AddRentalSession (AddRentalSessionRequest) returns (AddRentalSessionResponse);
 }
 
 message ClientMessage  {
@@ -20,6 +21,14 @@ message RegisterClientRequest {
   string email = 1;
   string userName = 2;
   string password = 3;
+}
+
+message AddRentalSessionRequest {
+	string email = 1;
+}
+
+message AddRentalSessionResponse {
+	bool isSuccess = 1;
 }
 
 message RegisterClientResponse {
