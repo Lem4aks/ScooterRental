@@ -2,6 +2,8 @@
 @using System.Net.Http
 @using System.Net.Http.Json
 @inject HttpClient HttpClient
+@inject NavigationManager Navigation
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <h3>Доступні Самокати для прокату</h3>
 <style>
@@ -49,7 +51,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var scooter in scooters)
+            @foreach (var scooter in availableScooters)
             {
                 <tr>
                     <td class="bold-text">@scooter.Id</td>
@@ -99,8 +101,20 @@ else
 
         try
         {
-            orderInProgress = true;//test
-            Console.WriteLine($"Ordering scooter with id {id}...");
+            orderInProgress = true;
+            var clientId = await LocalStorage.GetItemAsync<Guid>("clientId");
+
+            var response = await HttpClient.PostAsJsonAsync($"/StartSession?clientId={clientId}&scooterId={id}", new { clientId, scooterId = id });
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Successfully ordered scooter with id {id}");
+            }
+            else
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error ordering scooter: {errorMessage}");
+            }
         }
         catch (Exception ex)
         {
@@ -109,6 +123,7 @@ else
         finally
         {
             orderInProgress = false;
+            await LoadScooters();
         }
     }
 

@@ -1,6 +1,48 @@
 ﻿@page "/Histor"
+@inject HttpClient HttpClient
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 <h3>Histor</h3>
-
+<table class="table">
+    <thead class="bold-line">
+        <tr>
+            <th>Старт</th>
+            <th>Модель</th>
+            <th>Кінець</th>
+            <th>Ціна</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var rental in rentals)
+        {
+            <tr>
+                <td>@rental.StartTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>@rental.ScooterModel</td>
+                <td>@rental.EndTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>@rental.RentalCost.ToString("0.00")</td>
+            </tr>
+        }
+    </tbody>
+</table>
 @code {
+    private List<Rental> rentals = new List<Rental>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        var clientId = await LocalStorage.GetItemAsync<Guid>("clientId");
+        var response = await HttpClient.GetFromJsonAsync<List<Rental>>($"/ClientHistory?clientId={clientId}");
+
+        if (response != null)
+        {
+            rentals = response;
+        }
+    }
+
+    public class Rental
+    {
+        public Guid Id { get; set; }
+        public string? ScooterModel { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public decimal RentalCost { get; set; }
+    }
 }

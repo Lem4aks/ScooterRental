@@ -42,6 +42,8 @@ namespace APIGateway.Controllers
 
             ClientDto clientDto = await _repository.GetPersonalCabinet(id);
 
+            clientDto.Id = id;
+
             clientDto.Token = token;
 
             return Ok(clientDto);
