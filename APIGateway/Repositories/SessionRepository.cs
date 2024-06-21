@@ -24,6 +24,7 @@ namespace APIGateway.Repositories
 
             GetSessionInfoResponse response = await _client.GetSessionInfoAsync(request);
 
+
             if (response == null)
             {
                 throw new Exception("No session under such ID");

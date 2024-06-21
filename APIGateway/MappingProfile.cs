@@ -30,6 +30,15 @@ namespace APIGateway
                 .ForMember(dest => dest.StartTime, opt => opt.MapFrom(scr => DateTime.Parse(scr.StartTime)))
                 .ForMember(dest => dest.EndTime, opt => opt.MapFrom(scr => DateTime.Parse(scr.EndTime)))
                 .ForMember(dest => dest.RentalCost, opt => opt.MapFrom(src => Convert.ToDecimal(src.RentalCost)));
+
+            CreateMap<GetSessionInfoResponse, Session>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.Parse(src.SessionMessage.Id)))
+            .ForMember(dest => dest.ClientId, opt => opt.MapFrom(src => Guid.Parse(src.SessionMessage.ClientId)))
+            .ForMember(dest => dest.ScooterId, opt => opt.MapFrom(src => Guid.Parse(src.SessionMessage.ScooterId)))
+            .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => DateTime.Parse(src.SessionMessage.StartTime)))
+            .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.SessionMessage.EndTime) ? (DateTime?)null : DateTime.Parse(src.SessionMessage.EndTime)))
+            .ForMember(dest => dest.RentalCost, opt => opt.MapFrom(src => (decimal)src.SessionMessage.RentalCost));
         }
     }
-}
+ }
+
