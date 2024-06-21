@@ -10,6 +10,8 @@ namespace APIGateway.Interfaces.Repositories
         Task<List<Scooter>> GetScooters();
         Task RemoveScooter(Guid id);
 
+        Task<Guid> GetScooterBySession(Guid sessionId);
+
         Task<string> GetScooterModel(Guid scooterId);
         Task UpdateScooterStatus(Guid id);
     }

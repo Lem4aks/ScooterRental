@@ -25,6 +25,11 @@ namespace APIGateway
             .ForMember(dest => dest.userName, opt => opt.MapFrom(src => src.Client.UserName))
             .ForMember(dest => dest.password, opt => opt.MapFrom(src => src.Client.Password))
             .ForMember(dest => dest.SessionIds, opt => opt.MapFrom(src => src.Client.SessionIds.Select(id => Guid.Parse(id)).ToList()));
+
+            CreateMap<EndSessionResponse, SessionDto>()
+                .ForMember(dest => dest.StartTime, opt => opt.MapFrom(scr => DateTime.Parse(scr.StartTime)))
+                .ForMember(dest => dest.EndTime, opt => opt.MapFrom(scr => DateTime.Parse(scr.EndTime)))
+                .ForMember(dest => dest.RentalCost, opt => opt.MapFrom(src => Convert.ToDecimal(src.RentalCost)));
         }
     }
 }

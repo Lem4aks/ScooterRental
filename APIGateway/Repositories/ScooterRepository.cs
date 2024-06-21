@@ -71,6 +71,20 @@ namespace APIGateway.Repositories
             }
         }
 
+        public async Task<Guid> GetScooterBySession(Guid sessionId)
+        {
+            GetScooterIdBySessionRequest request = new GetScooterIdBySessionRequest { SessionId = sessionId.ToString() };
+
+            GetScooterIdBySessionResponse response = await _scooterClient.GetScooterIdBySessionAsync(request);
+
+            if (response.ScooterId == null)
+            {
+                throw new Exception("Failed to find a scooter.");
+            }
+
+            return Guid.Parse(response.ScooterId);
+        }
+
         public async Task RemoveScooter(Guid id)
         {
             DeleteScooterRequest request = new DeleteScooterRequest { Id = id.ToString() };

@@ -56,6 +56,19 @@ namespace ScooterService.Repositories
             return true;
         }
 
+        public async Task<Guid> GetScooterIdBySession(Guid sessionId)
+        {
+            ScooterEntity? scooter = await _context.Scooters
+                    .FirstOrDefaultAsync(s => s.SessionIds != null && s.SessionIds.Contains(sessionId));
+
+            if (scooter == null)
+            {
+                throw new Exception($"No scooter found with session ID: {sessionId}");
+            }
+
+            return scooter.Id;
+        }
+
         public async Task<string> GetScooterModel(Guid id)
         {
             ScooterEntity? scooterEntity = await _context.Scooters.FindAsync(id);

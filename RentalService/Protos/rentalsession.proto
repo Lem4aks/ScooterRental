@@ -42,5 +42,7 @@ message EndSessionRequest {
 }
 
 message EndSessionResponse {
-    bool isSuccess = 1;
+    string startTime = 4;   
+    string endTime = 5;     
+    double rentalCost = 6; 
 }
