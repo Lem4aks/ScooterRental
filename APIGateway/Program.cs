@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.CookiePolicy;
+using APIGateway.JWT;
 namespace APIGateway
 {
     public class Program
@@ -50,6 +51,7 @@ namespace APIGateway
             builder.Services.AddAuthorization();
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
+            builder.Services.AddScoped<IJwtProvider, JwtProvider>();    
             builder.Services.AddScoped<IClientRepository, ClientRepository>();
             builder.Services.AddScoped<IScooterRepository, ScooterRepository>();
             builder.Services.AddScoped<ISessionRepository, SessionRepository>();

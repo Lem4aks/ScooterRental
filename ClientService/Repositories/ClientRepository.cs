@@ -19,12 +19,22 @@ namespace ClientService.Repositories
 
         public async Task<Client> GetClientByEmail(string email)
         {
-            ClientEntity clientEntity = await _context.Clients
+            ClientEntity? clientEntity = await _context.Clients
                 .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.email == email) ?? throw new Exception("Wrong email");
+                .FirstOrDefaultAsync(c => c.email == email);
+
 
             return _mapper.Map<Client>(clientEntity); 
         }
+
+        public async Task<Client> GetClientById(Guid id)
+        {
+            ClientEntity clientEntity = await _context.Clients.FindAsync(id) ?? throw new Exception("No user under such ID");
+
+            
+            return _mapper.Map<Client>(clientEntity);
+        }
+                
 
         public async Task<Client> GetClientByUserName(string userName)
         {

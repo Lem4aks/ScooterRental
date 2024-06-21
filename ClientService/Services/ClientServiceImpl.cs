@@ -33,7 +33,7 @@ namespace ClientService.Services
 
         public override async Task<GetClientInfoResponse> GetClientInfo(GetClientInfoRequest request, ServerCallContext context)
         {
-            Client client = await _clientRepository.GetClientByEmail(request.Identifier);
+            Client client = await _clientRepository.GetClientById(Guid.Parse(request.Id));
 
             if (client == null)
             {
@@ -62,12 +62,16 @@ namespace ClientService.Services
         {
           Client client = await _clientRepository.GetClientByEmail(request.Identifier);
 
+            if (client == null)
+            {
+                return new AuthenticateClientResponse { IsSuccess = false, Token = string.Empty , ErrorMessage = "No user found with this email" };
+            }
 
           var result = _passwordHasher.Verify(request.Password, client.password);
 
             if (result == false)
             {
-                throw new Exception("Failed to login");
+                return new AuthenticateClientResponse { IsSuccess = false, Token = string.Empty, ErrorMessage = "Wrong password" };
             }
 
             var token = _jwtProvider.GenerateToken(client);

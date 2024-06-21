@@ -1,6 +1,7 @@
 ﻿using APIGateway.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using APIGateway.Models;
+using APIGateway.JWT;
 
 namespace APIGateway.Controllers
 {
@@ -8,10 +9,12 @@ namespace APIGateway.Controllers
     public class ClientController : ControllerBase
     {
         private readonly IClientRepository _repository;
+        private readonly IJwtProvider _jwtProvider;
 
-        public ClientController(IClientRepository repository)
+        public ClientController(IClientRepository repository, IJwtProvider jwtProvider)
         {
             _repository = repository;
+            _jwtProvider = jwtProvider;
         }
 
         [HttpPost("Register")]
@@ -29,9 +32,15 @@ namespace APIGateway.Controllers
         {
             var token = await _repository.Login(email, password);
 
+            if (token == string.Empty) {
+                return BadRequest(token);
+            }
+
             Response.Cookies.Append("cookies", token);
 
-            ClientDto clientDto = await _repository.GetPersonalCabinet(email);
+            Guid id = Guid.Parse(_jwtProvider.GetIdFromToken(token));
+
+            ClientDto clientDto = await _repository.GetPersonalCabinet(id);
 
             return Ok(clientDto);
         }

@@ -49,17 +49,17 @@ namespace APIGateway.Repositories
 
             if (!response.IsSuccess)
             {
-                throw new Exception("Invalid password or login");
+                throw new Exception(response.ErrorMessage);
             }
 
             return response.Token;
         }
 
-        public async Task<ClientDto> GetPersonalCabinet(string email)
+        public async Task<ClientDto> GetPersonalCabinet(Guid id)
         {
             GetClientInfoRequest request = new GetClientInfoRequest
             {
-                Identifier = email,
+                Id = id.ToString(),
             };
 
             GetClientInfoResponse response = await _client.GetClientInfoAsync(request);
@@ -68,6 +68,7 @@ namespace APIGateway.Repositories
 
             return new ClientDto
             {
+                Id= client.Id,
                 userName = client.userName,
                 SessionIds = client.SessionIds,
             };
