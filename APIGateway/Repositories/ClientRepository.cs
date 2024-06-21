@@ -18,6 +18,7 @@ namespace APIGateway.Repositories
             _mapper = mapper;
         }
 
+
         public async Task<bool> RegisterClient(string username, string password, string email)
         {
             RegisterClientRequest request = new RegisterClientRequest
@@ -73,6 +74,21 @@ namespace APIGateway.Repositories
                 SessionIds = client.SessionIds,
             };
 
-        } 
+        }
+        
+        public async Task AddSession(Guid clientId,  Guid sessionId)
+        {
+            AddRentalSessionRequest request = new AddRentalSessionRequest
+            {
+                ClientId = clientId.ToString(),
+                SessionId = sessionId.ToString(),
+            };
+
+            AddRentalSessionResponse response = await _client.AddRentalSessionAsync(request);
+
+            if (!response.IsSuccess) {
+                throw new Exception("Error adding a session");
+            }
+        }
     }
 }

@@ -58,6 +58,20 @@ namespace ClientService.Services
             
         }
 
+        public override async Task<AddRentalSessionResponse> AddRentalSession(AddRentalSessionRequest request, ServerCallContext context)
+        {
+            bool check = await _clientRepository.AddSession(Guid.Parse(request.ClientId), Guid.Parse(request.SessionId));
+
+            if (!check)
+            {
+                return new AddRentalSessionResponse { IsSuccess = false };
+            }
+
+            return new AddRentalSessionResponse { IsSuccess = true };
+        }
+
+
+
         public override async Task<AuthenticateClientResponse> AuthenticateClient(AuthenticateClientRequest request, ServerCallContext context)
         {
           Client client = await _clientRepository.GetClientByEmail(request.Identifier);

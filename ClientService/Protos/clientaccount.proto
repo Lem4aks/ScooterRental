@@ -24,7 +24,8 @@ message RegisterClientRequest {
 }
 
 message AddRentalSessionRequest {
-	string email = 1;
+	string clientId = 1;
+	string sessionId = 2;
 }
 
 message AddRentalSessionResponse {

@@ -22,7 +22,7 @@
 
         public static Session CreateSession(Guid clientId, Guid scooterId, DateTime startTime)
         {
-            return new Session(clientId, scooterId, startTime);
+            return new Session(clientId, scooterId, startTime.ToUniversalTime());
         }
     }
 }

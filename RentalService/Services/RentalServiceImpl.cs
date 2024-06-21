@@ -66,7 +66,13 @@ namespace RentalService.Services
 
             if (sessionToEnd != null)
             {
-                return new EndSessionResponse { IsSuccess = true };
+                return new EndSessionResponse
+                {
+                    StartTime = sessionToEnd.StartTime.ToString("O"),
+                    EndTime = sessionToEnd.EndTime?.ToString("O"),
+                    RentalCost = (double)sessionToEnd.RentalCost
+                };
+
             }
             else
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "Unable to end a session, check session ID"));

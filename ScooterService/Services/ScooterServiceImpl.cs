@@ -29,6 +29,17 @@ namespace ScooterService.Services
             return response;
         }
 
+        public override async Task<GetScooterIdBySessionResponse> GetScooterIdBySession(GetScooterIdBySessionRequest request, ServerCallContext context)
+        {
+            Guid scooterId = await _repository.GetScooterIdBySession(Guid.Parse(request.SessionId));
+
+            if (scooterId == Guid.Empty)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Unable to find a scooter"));
+            }
+
+            return new GetScooterIdBySessionResponse { ScooterId = scooterId.ToString() };
+        }
         public override async Task<GetAllScootersResponse> GetAllScooters(GetAllScootersRequest request, ServerCallContext context)
         {
             List<Scooter> allScooters = await _repository.GetAllScooters();

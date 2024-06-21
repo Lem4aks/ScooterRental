@@ -32,7 +32,7 @@ namespace APIGateway.Repositories
             return _mapper.Map<Session>(response);
         }
 
-        public async Task<bool> StartSession(Guid clientId, Guid scooterId)
+        public async Task<Guid> StartSession(Guid clientId, Guid scooterId)
         {
             StartSessionRequest request = new StartSessionRequest
             {
@@ -47,21 +47,21 @@ namespace APIGateway.Repositories
                 throw new Exception("Error starting session");
             }
 
-            return response.IsSuccess;
+            return Guid.Parse(response.SessionId);
         }
 
-        public async Task<bool> EndSession(Guid sessionId)
+        public async Task<SessionDto> EndSession(Guid sessionId)
         {
             EndSessionRequest request = new EndSessionRequest { Id = sessionId.ToString() };
 
             EndSessionResponse response = await _client.EndSessionAsync(request);
 
-            if (!response.IsSuccess)
+            if (response == null)
             {
                 throw new Exception("Error ending a session");
             }
 
-            return response.IsSuccess;
+            return _mapper.Map<SessionDto>(response);
         }
 
     }

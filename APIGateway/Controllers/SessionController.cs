@@ -46,30 +46,39 @@ namespace APIGateway.Controllers
             return Ok(rentals);
         }
 
+        
         [HttpPost("StartSession")]
 
         public async Task<IActionResult> StartSession(Guid clientId, Guid scooterId)
         {
-            bool check = await _sessionRepository.StartSession(clientId, scooterId);
+            Guid sessionId = await _sessionRepository.StartSession(clientId, scooterId);
 
-            if (!check)
+            if (sessionId == Guid.Empty)
             {
                 return StatusCode(500, "An error occurred while starting a session.");
             }
-
+            await _scooterRepository.AddSession(scooterId, sessionId);
+            await _scooterRepository.UpdateScooterStatus(scooterId);
+            await _clientRepository.AddSession(clientId, sessionId);
             return Ok("Session started");
         }
 
+
+        [HttpPost("EndSession")]
         public async Task<IActionResult> EndSession(Guid rentalId)
         {
-            bool check = await _sessionRepository.EndSession(rentalId);
+            SessionDto sessionDto = await _sessionRepository.EndSession(rentalId);
 
-            if (!check)
+            Guid scooterId = await _scooterRepository.GetScooterBySession(rentalId);
+
+            await _scooterRepository.UpdateScooterStatus(scooterId);
+
+            if (sessionDto == null)
             {
                 return StatusCode(500, "An error occurred while ending a session.");
             }
 
-            return Ok($"Session {rentalId} successfully ended");
+            return Ok(sessionDto);
         }
     }
 }
