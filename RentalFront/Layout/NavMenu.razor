@@ -1,4 +1,6 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Самокати </a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -14,6 +16,14 @@
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> About
             </NavLink>
         </div>
+        @if (curName=="test")
+        {
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="Listadmin">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Admin
+            </NavLink>
+        </div>
+}
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="List">
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> List
@@ -23,9 +33,15 @@
 </div>
 
 @code {
+    private string curName;
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        curName = await LocalStorage.GetItemAsync<string>("curName");
+    }
 
     private void ToggleNavMenu()
     {

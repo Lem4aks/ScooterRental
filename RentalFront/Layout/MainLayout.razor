@@ -3,7 +3,6 @@
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
-
 @if (isAuthenticated)
 {
     <div class="page">
@@ -42,7 +41,7 @@ else if (notregister)
             <div class="col-md-6">
                 <h3 class="text-center">Авторизація користувача</h3>
 
-                <EditForm Model="@loginUser" OnValidSubmit="HandleValidSubmit">
+                <EditForm Model="@loginUser" OnValidSubmit="Login">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
 
@@ -58,7 +57,7 @@ else if (notregister)
                         <button type="submit" class="btn btn-primary w-100">Авторизація</button>
                     </div>
                     <div class="mb-3">
-                        <button class="btn btn-primary w-100" @onclick="Register">Зареєструватися</button>
+                        <button class="btn btn-primary w-100" @onclick="ToggleRegister">Зареєструватися</button>
                     </div>
                 </EditForm>
             </div>
@@ -73,7 +72,7 @@ else
             <div class="col-md-6">
                 <h3 class="text-center">Реєстрація нового користувача</h3>
 
-                <EditForm Model="@userR" class="mt-4" OnValidSubmit="Registers">
+                <EditForm Model="@userR" class="mt-4" OnValidSubmit="Register">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
 
@@ -140,12 +139,12 @@ else
         dropdownOpen = !dropdownOpen;
     }
 
-    private void Register()
+    private void ToggleRegister()
     {
         notregister = !notregister;
     }
 
-    private async Task HandleValidSubmit()
+    private async Task Login()
     {
         var response = await HttpClient.PostAsJsonAsync($"/api/v1/client/Login?email={loginUser.Email}&password={loginUser.Password}", (loginUser.Email, loginUser.Password));
         if (response.IsSuccessStatusCode)
@@ -161,7 +160,7 @@ else
         }
     }
 
-    private async Task Registers()
+    private async Task Register()
     {
         var response = await HttpClient.PostAsJsonAsync($"/api/v1/client/Register?userName={userR.Username}&password={userR.Password}&email={userR.Email}", (userR.Username, userR.Email, userR.Password));
         if (response.IsSuccessStatusCode)

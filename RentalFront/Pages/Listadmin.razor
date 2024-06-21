@@ -1,4 +1,4 @@
-﻿@page "/List"
+﻿@page "/Listadmin"
 @using System.Net.Http
 @using System.Net.Http.Json
 @inject HttpClient HttpClient
@@ -23,7 +23,6 @@
     .bold-line th {
         border-bottom: 3px solid black;
     }
-
     .bold-text {
         font-weight: bold;
         border-bottom: 3px solid black;
@@ -57,16 +56,23 @@ else
                     <td class="bold-text">@(scooter.Status ? "Доступно" : "Недоступно")</td>
                     <td class="bold-text">
                         <button class="btn btn-success" @onclick="() => OrderScooter(scooter.Id)">Замовити</button>
+                        <button class="btn btn-danger ml-2" @onclick="() => RemoveScooter(scooter.Id)">Видалити</button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+
+    <div class="input-group mt-3">
+        <input type="text" @bind="newScooterModel" placeholder="Введіть модель скутера" class="form-control" />
+        <div class="input-group-append">
+            <button class="btn btn-primary" @onclick="AddScooter">Додати</button>
+        </div>
+    </div>
 }
 
 @code {
     private List<Scooter> scooters;
-    private List<Scooter> availableScooters;
     private string newScooterModel;
     private bool orderInProgress = false;
 
@@ -80,13 +86,43 @@ else
         try
         {
             scooters = await HttpClient.GetFromJsonAsync<List<Scooter>>("/api/v1/scooter");
-            availableScooters = scooters?.Where(s => s.Status).ToList();
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error fetching scooters: {ex.Message}");
             scooters = new List<Scooter>();
-            availableScooters = new List<Scooter>();
+        }
+    }
+
+    private async Task RemoveScooter(Guid id)
+    {
+        try
+        {
+            await HttpClient.DeleteAsync($"/api/v1/scooter?id={id}");
+            await LoadScooters();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error removing scooter: {ex.Message}");
+        }
+    }
+
+    private async Task AddScooter()
+    {
+        if (string.IsNullOrWhiteSpace(newScooterModel))
+        {
+            return;
+        }
+
+        try
+        {
+            await HttpClient.PostAsJsonAsync($"/api/v1/scooter?model={newScooterModel}", newScooterModel);
+            await LoadScooters();
+            newScooterModel = "";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding scooter: {ex.Message}");
         }
     }
 
