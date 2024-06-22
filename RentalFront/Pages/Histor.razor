@@ -63,6 +63,11 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
+        await LoadScooters();
+    }
+
+    private async Task LoadScooters()
+    {
         try
         {
             var clientId = await LocalStorage.GetItemAsync<Guid>("clientId");
@@ -107,7 +112,7 @@ else
             {
                 var rental = rentals.FirstOrDefault(r => r.Id == rentalId);
                 Console.WriteLine($"Successfully ended session with id {rentalId}");
-                StateHasChanged();
+                await LoadScooters();
             }
             else
             {
