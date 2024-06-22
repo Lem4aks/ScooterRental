@@ -25,20 +25,37 @@ namespace APIGateway.Controllers
         {
             ClientDto clientDto = await _clientRepository.GetPersonalCabinet(clientId);
 
-            List<Rental> rentals = new List<Rental>();
 
-            foreach (Guid sessionId in clientDto.SessionIds) { 
-                Session session = await _sessionRepository.GetSessionInfo(sessionId);
-                rentals.Add(new Rental
-                {
-                    Id = sessionId,
-                    ScooterModel = await _scooterRepository.GetScooterModel(session.ScooterId),
-                    StartTime = session.StartTime,
-                    EndTime = session.EndTime,
-                    RentalCost = session.RentalCost,    
-                });
+            List<Task<Session>> sessionTasks = new List<Task<Session>>();
+
+            List<Task<string>> scooterModelTasks = new List<Task<string>>();
+
+            foreach (Guid sessionId in clientDto.SessionIds)
+            {
+                sessionTasks.Add(_sessionRepository.GetSessionInfo(sessionId));
             }
 
+            Session[] sessions = await Task.WhenAll(sessionTasks);
+
+            foreach (var session in sessions)
+            {
+                scooterModelTasks.Add(_scooterRepository.GetScooterModel(session.ScooterId));
+            }
+
+            string[] scooterModels = await Task.WhenAll(scooterModelTasks);
+            List<Rental> rentals = new List<Rental>();
+
+            for (int i = 0; i < sessions.Length; i++)
+            {
+                rentals.Add(new Rental
+                {
+                    Id = clientDto.SessionIds[i],
+                    ScooterModel = scooterModels[i],
+                    StartTime = sessions[i].StartTime,
+                    EndTime = sessions[i].EndTime,
+                    RentalCost = sessions[i].RentalCost,
+                });
+            }
             if (rentals == null) {
                 return StatusCode(500, "An error occurred while retrieving rental history.");
             }
@@ -52,6 +69,7 @@ namespace APIGateway.Controllers
         public async Task<IActionResult> StartSession(Guid clientId, Guid scooterId)
         {
             Guid sessionId = await _sessionRepository.StartSession(clientId, scooterId);
+
 
             if (sessionId == Guid.Empty)
             {

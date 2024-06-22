@@ -89,7 +89,7 @@ namespace ScooterService.Repositories
                 return false;
             }
 
-            scooter!.Status = !scooter.Status;
+            scooter.Status = !scooter.Status;
             _context.Scooters.Update(scooter);
             await _context.SaveChangesAsync();
             return true;
@@ -105,7 +105,6 @@ namespace ScooterService.Repositories
             }
 
             scooterEntity.SessionIds?.Add(sessionId);
-            scooterEntity.Status = false;
 
             _context.Scooters.Update(scooterEntity);
             await _context.SaveChangesAsync();
