@@ -20,50 +20,38 @@ namespace APIGateway.Controllers
         }
 
         [HttpGet("ClientHistory")]
-        
+
         public async Task<IActionResult> ClientHistory(Guid clientId)
         {
-            ClientDto clientDto = await _clientRepository.GetPersonalCabinet(clientId);
-
-
-            List<Task<Session>> sessionTasks = new List<Task<Session>>();
-
-            List<Task<string>> scooterModelTasks = new List<Task<string>>();
-
-            foreach (Guid sessionId in clientDto.SessionIds)
+            try
             {
-                sessionTasks.Add(_sessionRepository.GetSessionInfo(sessionId));
-            }
+                ClientDto clientDto = await _clientRepository.GetPersonalCabinet(clientId);
 
-            Session[] sessions = await Task.WhenAll(sessionTasks);
+                var sessionTasks = clientDto.SessionIds.Select(_sessionRepository.GetSessionInfo);
+                var sessions = await Task.WhenAll(sessionTasks);
 
-            foreach (var session in sessions)
-            {
-                scooterModelTasks.Add(_scooterRepository.GetScooterModel(session.ScooterId));
-            }
+                var scooterModelTasks = sessions.Select(s => _scooterRepository.GetScooterModel(s.ScooterId));
+                var scooterModels = await Task.WhenAll(scooterModelTasks);
 
-            string[] scooterModels = await Task.WhenAll(scooterModelTasks);
-            List<Rental> rentals = new List<Rental>();
-
-            for (int i = 0; i < sessions.Length; i++)
-            {
-                rentals.Add(new Rental
+                var rentals = sessions.Zip(scooterModels, (session, model) => new Rental
                 {
-                    Id = clientDto.SessionIds[i],
-                    ScooterModel = scooterModels[i],
-                    StartTime = sessions[i].StartTime,
-                    EndTime = sessions[i].EndTime,
-                    RentalCost = sessions[i].RentalCost,
-                });
+                    Id = session.Id,
+                    ScooterModel = model,
+                    StartTime = session.StartTime,
+                    EndTime = session.EndTime,
+                    RentalCost = session.RentalCost,
+                }).ToList();
+
+                return Ok(rentals);
             }
-            if (rentals == null) {
+            catch (Exception ex)
+            {
+                // Log the exception
                 return StatusCode(500, "An error occurred while retrieving rental history.");
             }
-
-            return Ok(rentals);
         }
 
-        
+
         [HttpPost("StartSession")]
 
         public async Task<IActionResult> StartSession(Guid clientId, Guid scooterId)
