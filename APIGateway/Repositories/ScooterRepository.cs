@@ -65,6 +65,7 @@ namespace APIGateway.Repositories
 
             UpdateScooterStatusResponse response = await _scooterClient.UpdateScooterStatusAsync(request);
 
+
             if (!response.IsSuccess)
             {
                 throw new Exception("Failed to update scooter status.");
