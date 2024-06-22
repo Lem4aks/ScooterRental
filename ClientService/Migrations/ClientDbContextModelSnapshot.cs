@@ -30,7 +30,6 @@ namespace ClientService.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<List<Guid>>("SessionIds")
-                        .IsRequired()
                         .HasColumnType("uuid[]");
 
                     b.Property<string>("email")

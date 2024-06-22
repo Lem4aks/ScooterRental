@@ -1,8 +1,10 @@
 ﻿@using System.ComponentModel.DataAnnotations
+@using System.Net.Http.Headers;
 @inject HttpClient HttpClient
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
 @if (isAuthenticated)
 {
     <div class="page">
@@ -12,12 +14,6 @@
 
         <main>
             <div class="top-row px-4 d-flex align-items-center">
-                <div class="out_inf">
-                    <span>Поч</span>
-                    <span>Пот</span>
-                    <span>Зав</span>
-                    <span>Ціна</span>
-                </div>
                 <div class="dropdown" @onclick="ToggleDropdown" style="position: relative;">
                     <button class="btn btn-secondary dropdown-toggle">
                         @curName
@@ -41,7 +37,7 @@ else if (notregister)
             <div class="col-md-6">
                 <h3 class="text-center">Авторизація користувача</h3>
 
-                <EditForm Model="@loginUser" OnValidSubmit="Login">
+                <EditForm Model="@loginUser" OnValidSubmit="LoginUserAsync">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
 
@@ -56,14 +52,10 @@ else if (notregister)
                     <div class="mb-3">
                         <button type="submit" class="btn btn-primary w-100">Авторизація</button>
                     </div>
-                    <div class="mb-3">
-                        <button class="btn btn-primary w-100" @onclick="ToggleRegister">Зареєструватися</button>
-                    </div>
                 </EditForm>
             </div>
         </div>
     </div>
-
 }
 else
 {
@@ -72,7 +64,7 @@ else
             <div class="col-md-6">
                 <h3 class="text-center">Реєстрація нового користувача</h3>
 
-                <EditForm Model="@userR" class="mt-4" OnValidSubmit="Register">
+                <EditForm Model="@userR" class="mt-4" OnValidSubmit="RegisterUserAsync">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
 
@@ -88,7 +80,9 @@ else
                         <label for="email" class="form-label">Пошта:</label>
                         <InputText id="email" class="form-control" @bind-Value="userR.Email" />
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Зареєструватися</button>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary w-100">Зареєструватися</button>
+                    </div>
                 </EditForm>
             </div>
         </div>
@@ -100,8 +94,10 @@ else
     private bool notregister = true;
     private bool dropdownOpen = false;
     private string curName;
+    private DateTime StartTime;
     private LoginUser loginUser = new LoginUser();
     private RegisterUser userR = new RegisterUser();
+    private Guid curSId;
 
     public class LoginUser
     {
@@ -131,7 +127,17 @@ else
     protected override async Task OnInitializedAsync()
     {
         curName = await LocalStorage.GetItemAsync<string>("curName");
+        var token = await LocalStorage.GetItemAsync<string>("token");
+
+        if (!string.IsNullOrEmpty(token))
+        {
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        }
+
         isAuthenticated = !string.IsNullOrEmpty(curName);
+        {
+            Console.WriteLine($"$Successfully ordered scooter with id {await LocalStorage.GetItemAsync<Guid>("clientId")}");
+        }
     }
 
     private void ToggleDropdown()
@@ -144,23 +150,29 @@ else
         notregister = !notregister;
     }
 
-    private async Task Login()
+    private async Task LoginUserAsync()
     {
         var response = await HttpClient.PostAsJsonAsync($"/api/v1/client/Login?email={loginUser.Email}&password={loginUser.Password}", (loginUser.Email, loginUser.Password));
         if (response.IsSuccessStatusCode)
         {
             var clientDto = await response.Content.ReadFromJsonAsync<ClientDto>();
-            curName = clientDto.UserName;
+            curName = clientDto.userName;
             await LocalStorage.SetItemAsync("curName", curName);
+            await LocalStorage.SetItemAsync("token", clientDto.Token);
+            await LocalStorage.SetItemAsync("clientId", clientDto.Id);
+            await LocalStorage.SetItemAsync("SessionIds", clientDto.SessionIds);
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", clientDto.Token);
             isAuthenticated = true;
+            //await LoadStartTime(); // You can uncomment and implement this if needed.
         }
         else
         {
             var errorMessage = await response.Content.ReadAsStringAsync();
+            Console.Error.WriteLine($"Login failed: {errorMessage}");
         }
     }
 
-    private async Task Register()
+    private async Task RegisterUserAsync()
     {
         var response = await HttpClient.PostAsJsonAsync($"/api/v1/client/Register?userName={userR.Username}&password={userR.Password}&email={userR.Email}", (userR.Username, userR.Email, userR.Password));
         if (response.IsSuccessStatusCode)
@@ -181,10 +193,15 @@ else
 
     public class ClientDto
     {
-        public string UserName { get; set; }
+        public Guid Id { get; set; }
+        public string Token { get; set; }
+        public string userName { get; set; }
         public List<Guid> SessionIds { get; set; }
     }
+    public class SessionDto
+    {
+        public DateTime StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
+        public decimal RentalCost { get; set; }
+    }
 }
-
-
-       

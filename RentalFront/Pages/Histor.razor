@@ -1,39 +1,120 @@
 ﻿@page "/Histor"
 @inject HttpClient HttpClient
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
-<h3>Histor</h3>
-<table class="table">
-    <thead class="bold-line">
-        <tr>
-            <th>Старт</th>
-            <th>Модель</th>
-            <th>Кінець</th>
-            <th>Ціна</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var rental in rentals)
-        {
+
+<h3>История аренды</h3>
+
+@if (isLoading)
+{
+    <p>Загрузка...</p>
+}
+else if (rentals.Count == 0)
+{
+    <p>История аренды отсутствует.</p>
+}
+else
+{
+    <table class="table">
+        <thead class="bold-line">
             <tr>
-                <td>@rental.StartTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                <td>@rental.ScooterModel</td>
-                <td>@rental.EndTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                <td>@rental.RentalCost.ToString("0.00")</td>
+                <th>Старт</th>
+                <th>Модель</th>
+                <th>Кінець</th>
+                <th>Ціна</th>
+                <th>Дія</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var rental in rentals)
+            {
+                <tr>
+                    <td>@rental.StartTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>@rental.ScooterModel</td>
+                    <td>
+                        @if (rental.EndTime != null)
+                        {
+                            @rental.EndTime.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                        }
+                        else
+                        {
+                            <span>В процесі</span>
+                        }
+
+                    </td>
+                    <td>@rental.RentalCost.ToString("0.00")</td>
+                    <td>
+                        @if (rental.EndTime == null)
+                        {
+                            <button @onclick="() => End(rental.Id)">Завершити</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
 @code {
+    private DateTime StartTime;
+    private Guid curSId;
     private List<Rental> rentals = new List<Rental>();
+    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
-        var clientId = await LocalStorage.GetItemAsync<Guid>("clientId");
-        var response = await HttpClient.GetFromJsonAsync<List<Rental>>($"/ClientHistory?clientId={clientId}");
-
-        if (response != null)
+        try
         {
-            rentals = response;
+            var clientId = await LocalStorage.GetItemAsync<Guid>("clientId");
+            if (clientId == Guid.Empty)
+            {
+                isLoading = false;
+                return;
+            }
+
+            var response = await HttpClient.GetAsync($"ClientHistory?clientId={clientId}");
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<List<Rental>>();
+                if (result != null)
+                {
+                    rentals = result;
+                }
+            }
+            else
+            {
+                Console.Error.WriteLine($"Error fetching rental history: {response.ReasonPhrase}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Exception occurred: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task End(Guid rentalId)
+    {
+        try
+        {
+            var response = await HttpClient.PostAsJsonAsync($"EndSession?rentalId={rentalId}", rentalId);
+            if (response.IsSuccessStatusCode)
+            {
+                var rental = rentals.FirstOrDefault(r => r.Id == rentalId);
+                Console.WriteLine($"Successfully ended session with id {rentalId}");
+                StateHasChanged();
+            }
+            else
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                Console.Error.WriteLine($"Error ending session: {response.ReasonPhrase}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Exception occurred: {ex.Message}");
         }
     }
 
@@ -42,7 +123,7 @@
         public Guid Id { get; set; }
         public string? ScooterModel { get; set; }
         public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public DateTime? EndTime { get; set; }
         public decimal RentalCost { get; set; }
     }
 }
