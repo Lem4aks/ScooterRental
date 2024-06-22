@@ -71,7 +71,7 @@ else
     private string newScooterModel;
     private bool orderInProgress = false;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         await LoadScooters();
     }
@@ -81,6 +81,7 @@ else
         try
         {
             scooters = await HttpClient.GetFromJsonAsync<List<Scooter>>("/api/v1/scooter");
+            StateHasChanged();
         }
         catch (Exception ex)
         {

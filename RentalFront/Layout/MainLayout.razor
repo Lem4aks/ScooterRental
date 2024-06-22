@@ -52,6 +52,9 @@ else if (notregister)
                     <div class="mb-3">
                         <button type="submit" class="btn btn-primary w-100">Авторизація</button>
                     </div>
+                    <div class="mb-3">
+                        <button class="btn btn-primary w-100" @onclick="ToggleRegister">Зареєструватися</button>
+                    </div>
                 </EditForm>
             </div>
         </div>
@@ -163,7 +166,6 @@ else
             await LocalStorage.SetItemAsync("SessionIds", clientDto.SessionIds);
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", clientDto.Token);
             isAuthenticated = true;
-            //await LoadStartTime(); // You can uncomment and implement this if needed.
         }
         else
         {

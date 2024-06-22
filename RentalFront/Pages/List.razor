@@ -5,8 +5,6 @@
 @inject HttpClient HttpClient
 @inject NavigationManager Navigation
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
-
-<h3>Доступні Самокати для прокату</h3>
 <style>
     body::before {
         content: "";
@@ -32,6 +30,7 @@
         border-bottom: 3px solid black;
     }
 </style>
+<h3>Доступні Самокати для прокату</h3>
 @if (scooters == null)
 {
     <p>Завнтаження...</p>
@@ -75,7 +74,7 @@ else
     private List<Guid> sessionId = new List<Guid>();
     private bool orderInProgress = false;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         await LoadScooters();
     }
@@ -86,6 +85,7 @@ else
         {
             scooters = await HttpClient.GetFromJsonAsync<List<Scooter>>("/api/v1/scooter");
             availableScooters = scooters?.Where(s => s.Status).ToList();
+            StateHasChanged();
         }
         catch (Exception ex)
         {

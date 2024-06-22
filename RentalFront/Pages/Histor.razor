@@ -25,7 +25,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var rental in rentals)
+            @foreach (var rental in sortedRentals)
             {
                 <tr>
                     <td>@rental.StartTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
@@ -45,7 +45,7 @@ else
                     <td>
                         @if (rental.EndTime == null)
                         {
-                            <button @onclick="() => End(rental.Id)">Завершити</button>
+                            <button class="btn btn-danger ml-2" @onclick="() => End(rental.Id)">Завершити</button>
                         }
                     </td>
                 </tr>
@@ -58,9 +58,10 @@ else
     private DateTime StartTime;
     private Guid curSId;
     private List<Rental> rentals = new List<Rental>();
+    private List<Rental> sortedRentals = new List<Rental>();
     private bool isLoading = true;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         try
         {
@@ -78,6 +79,7 @@ else
                 if (result != null)
                 {
                     rentals = result;
+                    sortedRentals = rentals.OrderBy(r => r.EndTime == null ? DateTime.MinValue : r.StartTime).ToList();
                 }
             }
             else
@@ -94,6 +96,7 @@ else
             isLoading = false;
         }
     }
+       
 
     private async Task End(Guid rentalId)
     {
