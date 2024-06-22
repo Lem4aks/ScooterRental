@@ -20,38 +20,44 @@ namespace APIGateway.Controllers
         }
 
         [HttpGet("ClientHistory")]
-        
+
         public async Task<IActionResult> ClientHistory(Guid clientId)
         {
-            ClientDto clientDto = await _clientRepository.GetPersonalCabinet(clientId);
+            try
+            {
+                ClientDto clientDto = await _clientRepository.GetPersonalCabinet(clientId);
 
-            List<Rental> rentals = new List<Rental>();
+                var sessionTasks = clientDto.SessionIds.Select(_sessionRepository.GetSessionInfo);
+                var sessions = await Task.WhenAll(sessionTasks);
 
-            foreach (Guid sessionId in clientDto.SessionIds) { 
-                Session session = await _sessionRepository.GetSessionInfo(sessionId);
-                rentals.Add(new Rental
+                var scooterModelTasks = sessions.Select(s => _scooterRepository.GetScooterModel(s.ScooterId));
+                var scooterModels = await Task.WhenAll(scooterModelTasks);
+
+                var rentals = sessions.Zip(scooterModels, (session, model) => new Rental
                 {
-                    Id = sessionId,
-                    ScooterModel = await _scooterRepository.GetScooterModel(session.ScooterId),
+                    Id = session.Id,
+                    ScooterModel = model,
                     StartTime = session.StartTime,
                     EndTime = session.EndTime,
-                    RentalCost = session.RentalCost,    
-                });
-            }
+                    RentalCost = session.RentalCost,
+                }).ToList();
 
-            if (rentals == null) {
+                return Ok(rentals);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
                 return StatusCode(500, "An error occurred while retrieving rental history.");
             }
-
-            return Ok(rentals);
         }
 
-        
+
         [HttpPost("StartSession")]
 
         public async Task<IActionResult> StartSession(Guid clientId, Guid scooterId)
         {
             Guid sessionId = await _sessionRepository.StartSession(clientId, scooterId);
+
 
             if (sessionId == Guid.Empty)
             {
