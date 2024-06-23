@@ -7,7 +7,7 @@ namespace RentalService.Repositories
     {
         Task<Session> GetSessionInfo(Guid id);
 
-        Task<Session> StartSession(Guid clientId, Guid scooterId);
+        Task<Guid> StartSession(Guid clientId, Guid scooterId);
 
         Task<Session> EndSession(Guid sessionId);
     }

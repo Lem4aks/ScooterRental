@@ -34,7 +34,7 @@ namespace RentalService.Repositories
             }
         }
 
-        public async Task<Session> StartSession(Guid clientId, Guid scooterId) 
+        public async Task<Guid> StartSession(Guid clientId, Guid scooterId) 
         {
             DateTimeOffset startTime = DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(3));
 
@@ -45,7 +45,7 @@ namespace RentalService.Repositories
             await _context.Sessions.AddAsync(sessionEntity);
             await _context.SaveChangesAsync();
 
-            return session;
+            return session.Id;
         }
 
         public async Task<Session> EndSession(Guid sessionId)

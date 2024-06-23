@@ -1,40 +1,7 @@
 ﻿@page "/Histor"
+@using RentalFront.Models
 @inject HttpClient HttpClient
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
-<style>
-    body::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url('4357616.png');
-        background-repeat: no-repeat;
-        background-position: center;
-        filter: blur(1px);
-        opacity: 0.5;
-        z-index: -1;
-    }
-    @@media (max-width: 600px) {
-    body::before {
-        background-size: 50%;
-    }
-    }
-    @@media (max-width: 800px) {
-    body::before {
-        background-size: 60%;
-    }
-    }
-    .bold-line th {
-        border-bottom: 3px solid black;
-    }
-
-    .bold-text {
-        font-weight: bold;
-        border-bottom: 3px solid black;
-    }
-</style>
 <h3>История аренды</h3>
 
 @if (isLoading)
@@ -103,7 +70,7 @@ else
     private bool isLoading = true;
     public int cout;
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         await LoadScooters();
     }
@@ -169,15 +136,4 @@ else
             Console.Error.WriteLine($"Exception occurred: {ex.Message}");
         }
     }
-
-    public class Rental
-    {
-        public Guid Id { get; set; }
-        public string? ScooterModel { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime? EndTime { get; set; }
-        public decimal RentalCost { get; set; }
-    }
-
-     
 }

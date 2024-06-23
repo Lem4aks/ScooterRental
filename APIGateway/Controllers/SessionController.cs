@@ -64,7 +64,7 @@ namespace APIGateway.Controllers
             await _scooterRepository.AddSession(scooterId, sessionId);
             await _scooterRepository.UpdateScooterStatus(scooterId);
             await _clientRepository.AddSession(clientId, sessionId);
-            return Ok("Session started");
+            return Ok(sessionId);
         }
 
 

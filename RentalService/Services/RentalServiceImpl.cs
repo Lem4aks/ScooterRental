@@ -45,11 +45,11 @@ namespace RentalService.Services
             Guid clientId = Guid.Parse(request.ClientId);
             Guid scooterId = Guid.Parse(request.ScooterId);
 
-            Session sessionToStart = await _repository.StartSession(clientId, scooterId);
+            Guid sessionToStart = await _repository.StartSession(clientId, scooterId);
 
-            if (sessionToStart != null)
+            if (sessionToStart != Guid.Empty)
             {
-                return new StartSessionResponse { IsSuccess = true, SessionId = sessionToStart.Id.ToString() };
+                return new StartSessionResponse { IsSuccess = true, SessionId = sessionToStart.ToString() };
             }
 
             else
