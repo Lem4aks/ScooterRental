@@ -21,13 +21,11 @@ namespace APIGateway.Controllers
 
         [HttpGet("ClientHistory")]
 
-        public async Task<IActionResult> ClientHistory(Guid clientId)
+        public async Task<IActionResult> ClientHistory(List<Guid> sessionIds)
         {
             try
             {
-                ClientDto clientDto = await _clientRepository.GetPersonalCabinet(clientId);
-
-                var sessionTasks = clientDto.SessionIds.Select(_sessionRepository.GetSessionInfo);
+                var sessionTasks = sessionIds.Select(_sessionRepository.GetSessionInfo);
                 var sessions = await Task.WhenAll(sessionTasks);
 
                 var scooterModelTasks = sessions.Select(s => _scooterRepository.GetScooterModel(s.ScooterId));
