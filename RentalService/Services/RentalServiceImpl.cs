@@ -45,6 +45,13 @@ namespace RentalService.Services
             Guid clientId = Guid.Parse(request.ClientId);
             Guid scooterId = Guid.Parse(request.ScooterId);
 
+            bool check = await _repository.HasUnfinishedSession(clientId);
+
+            if (check == true)
+            {
+                return new StartSessionResponse { IsSuccess = false , SessionId = "null"};
+            }
+
             Guid sessionToStart = await _repository.StartSession(clientId, scooterId);
 
             if (sessionToStart != Guid.Empty)
