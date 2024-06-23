@@ -8,7 +8,7 @@
 {
     <p>Загрузка...</p>
 }
-else if (rentals.Count == 0)
+else if (sortedRentals.Count == 0)
 {
     <p>История аренды отсутствует.</p>
 }
@@ -65,32 +65,38 @@ else
     {
         await LoadScooters();
     }
-
     private async Task LoadScooters()
     {
         try
         {
-            var clientId = await LocalStorage.GetItemAsync<Guid>("clientId");
-            if (clientId == Guid.Empty)
+            var sessionIds = await LocalStorage.GetItemAsync<List<Guid>>("SessionIds");
+            if (sessionIds == null || sessionIds.Count == 0)
             {
                 isLoading = false;
                 return;
             }
 
-            var response = await HttpClient.GetAsync($"ClientHistory?clientId={clientId}");
-            if (response.IsSuccessStatusCode)
+            List<Rental> rentalList = new List<Rental>();
+
+            foreach (var sessionId in sessionIds)
             {
-                var result = await response.Content.ReadFromJsonAsync<List<Rental>>();
-                if (result != null)
+                var response = await HttpClient.PostAsJsonAsync($"ClientHistory" , sessionIds);
+                if (response.IsSuccessStatusCode)
                 {
-                    rentals = result;
-                    sortedRentals = rentals.OrderBy(r => r.EndTime == null ? DateTime.MinValue : r.StartTime).ToList();
+                    var result = await response.Content.ReadFromJsonAsync<List<Rental>>();
+                    if (result != null)
+                    {
+                        rentalList.AddRange(result);
+                    }
+                }
+                else
+                {
+                    Console.Error.WriteLine($"Error fetching rental history for session {sessionId}: {response.ReasonPhrase}");
                 }
             }
-            else
-            {
-                Console.Error.WriteLine($"Error fetching rental history: {response.ReasonPhrase}");
-            }
+
+            rentals = rentalList;
+            sortedRentals = rentals.OrderBy(r => r.EndTime == null ? DateTime.MinValue : r.StartTime).ToList();
         }
         catch (Exception ex)
         {
@@ -101,7 +107,6 @@ else
             isLoading = false;
         }
     }
-       
 
     private async Task End(Guid rentalId)
     {
