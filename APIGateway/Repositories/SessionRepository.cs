@@ -45,7 +45,7 @@ namespace APIGateway.Repositories
 
             if (!response.IsSuccess)
             {
-                throw new Exception("You have an unfinished session, end previous one to start");
+                return Guid.Empty;
             }
 
             return Guid.Parse(response.SessionId);

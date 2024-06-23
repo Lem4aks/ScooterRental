@@ -59,12 +59,12 @@ namespace APIGateway.Controllers
 
             if (sessionId == Guid.Empty)
             {
-                return StatusCode(500, "An error occurred while starting a session.");
+                return BadRequest("Can`t start a new session, when old one in progress");
             }
             await _scooterRepository.AddSession(scooterId, sessionId);
             await _scooterRepository.UpdateScooterStatus(scooterId);
             await _clientRepository.AddSession(clientId, sessionId);
-            return Ok("Session started");
+            return Ok(sessionId);
         }
 
 
