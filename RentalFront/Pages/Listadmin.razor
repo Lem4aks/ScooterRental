@@ -20,6 +20,17 @@
         z-index: -1;
     }
 
+    @@media (max-width: 600px) {
+        body::before {
+            background-size: 50%;
+        }
+    }
+
+    @@media (max-width: 800px) {
+        body::before {
+            background-size: 60%;
+        }
+    }
     .bold-line th {
         border-bottom: 3px solid black;
     }

@@ -21,6 +21,17 @@
         z-index: -1;
     }
 
+    @@media (max-width: 600px) {
+        body::before {
+            background-size: 50%;
+        }
+    }
+
+    @@media (max-width: 800px) {
+        body::before {
+            background-size: 60%;
+        }
+    }
     .bold-line th {
         border-bottom: 3px solid black;
     }
@@ -70,9 +81,7 @@ else
     private List<Scooter> scooters;
     private List<Scooter> availableScooters;
     private string newScooterModel;
-    private DateTime starttime;
     private List<Guid> sessionId = new List<Guid>();
-    private bool orderInProgress = false;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -97,14 +106,9 @@ else
 
     private async Task OrderScooter(Guid id)
     {
-        if (orderInProgress)
-        {
-            return;
-        }
 
         try
         {
-            orderInProgress = true;
             var clientId = await LocalStorage.GetItemAsync<Guid>("clientId");
 
             var response = await HttpClient.PostAsJsonAsync($"StartSession?clientId={clientId}&scooterId={id}", new { clientId, scooterId = id });
@@ -138,7 +142,6 @@ else
         }
         finally
         {
-            orderInProgress = false;
             await LoadScooters();
         }
     }

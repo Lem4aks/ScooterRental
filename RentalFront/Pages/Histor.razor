@@ -1,7 +1,40 @@
 ﻿@page "/Histor"
 @inject HttpClient HttpClient
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+<style>
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('4357616.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        filter: blur(1px);
+        opacity: 0.5;
+        z-index: -1;
+    }
+    @@media (max-width: 600px) {
+    body::before {
+        background-size: 50%;
+    }
+    }
+    @@media (max-width: 800px) {
+    body::before {
+        background-size: 60%;
+    }
+    }
+    .bold-line th {
+        border-bottom: 3px solid black;
+    }
 
+    .bold-text {
+        font-weight: bold;
+        border-bottom: 3px solid black;
+    }
+</style>
 <h3>История аренды</h3>
 
 @if (isLoading)
@@ -28,9 +61,17 @@ else
             @foreach (var rental in sortedRentals)
             {
                 <tr>
-                    <td>@rental.StartTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                    <td>@rental.ScooterModel</td>
-                    <td>
+                    <td class="bold-text">@rental.StartTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    @if (@rental.ScooterModel != null)
+                        {
+                            @rental.ScooterModel.ToString();
+                        }
+                        else
+                        {
+                            <span>Пусто</span>
+                        }
+                    <td class="bold-text">@rental.ScooterModel</td>
+                    <td class="bold-text">
                         @if (rental.EndTime != null)
                         {
                             @rental.EndTime.Value.ToString("yyyy-MM-dd HH:mm:ss")
@@ -40,9 +81,9 @@ else
                             <span>В процесі</span>
                         }
 
-                    </td>
-                    <td>@rental.RentalCost.ToString("0.00")</td>
-                    <td>
+                    </td class="bold-text">
+                    <td class="bold-text">@rental.RentalCost.ToString("0.00")</td>
+                    <td class="bold-text">
                         @if (rental.EndTime == null)
                         {
                             <button class="btn btn-danger ml-2" @onclick="() => End(rental.Id)">Завершити</button>
@@ -60,6 +101,7 @@ else
     private List<Rental> rentals = new List<Rental>();
     private List<Rental> sortedRentals = new List<Rental>();
     private bool isLoading = true;
+    public int cout;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -70,33 +112,29 @@ else
         try
         {
             var sessionIds = await LocalStorage.GetItemAsync<List<Guid>>("SessionIds");
+
             if (sessionIds == null || sessionIds.Count == 0)
             {
                 isLoading = false;
                 return;
             }
 
-            List<Rental> rentalList = new List<Rental>();
+            var queryString = string.Join("&", sessionIds.Select(id => $"sessionIds={id}"));
 
-            foreach (var sessionId in sessionIds)
+            var response = await HttpClient.GetAsync($"ClientHistory?{queryString}");
+            if (response.IsSuccessStatusCode)
             {
-                var response = await HttpClient.PostAsJsonAsync($"ClientHistory" , sessionIds);
-                if (response.IsSuccessStatusCode)
+                var result = await response.Content.ReadFromJsonAsync<List<Rental>>();
+                if (result != null)
                 {
-                    var result = await response.Content.ReadFromJsonAsync<List<Rental>>();
-                    if (result != null)
-                    {
-                        rentalList.AddRange(result);
-                    }
-                }
-                else
-                {
-                    Console.Error.WriteLine($"Error fetching rental history for session {sessionId}: {response.ReasonPhrase}");
+                    rentals = result;
+                    sortedRentals = rentals.OrderBy(r => r.EndTime == null ? DateTime.MinValue : r.StartTime).ToList();
                 }
             }
-
-            rentals = rentalList;
-            sortedRentals = rentals.OrderBy(r => r.EndTime == null ? DateTime.MinValue : r.StartTime).ToList();
+            else
+            {
+                Console.Error.WriteLine($"Error fetching rental history: {response.ReasonPhrase}");
+            }
         }
         catch (Exception ex)
         {
@@ -107,6 +145,7 @@ else
             isLoading = false;
         }
     }
+
 
     private async Task End(Guid rentalId)
     {
@@ -139,4 +178,6 @@ else
         public DateTime? EndTime { get; set; }
         public decimal RentalCost { get; set; }
     }
+
+     
 }
