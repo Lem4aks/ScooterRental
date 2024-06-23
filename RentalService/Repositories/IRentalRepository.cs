@@ -10,5 +10,7 @@ namespace RentalService.Repositories
         Task<Session> StartSession(Guid clientId, Guid scooterId);
 
         Task<Session> EndSession(Guid sessionId);
+
+        Task<bool> HasUnfinishedSession(Guid clientId);
     }
 }

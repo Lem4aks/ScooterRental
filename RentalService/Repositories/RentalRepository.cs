@@ -33,6 +33,13 @@ namespace RentalService.Repositories
                 throw new SessionNotFoundException($"No session found with ID: {id}");
             }
         }
+        public async Task<bool> HasUnfinishedSession(Guid clientId)
+        {
+            bool hasUnfinishedSessions = _context.Sessions
+                    .Any(s => s.ClientId == clientId && s.EndTime == null);
+
+            return hasUnfinishedSessions;
+        }
 
         public async Task<Session> StartSession(Guid clientId, Guid scooterId) 
         {
