@@ -5,7 +5,46 @@
 @using RentalFront.Models
 @inject HttpClient HttpClient
 @inject NavigationManager Navigation
-@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+
+<style>
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('4357616.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        filter: blur(1px);
+        opacity: 0.5;
+        z-index: -1;
+    }
+
+    @@media (max-width: 600px) {
+        body::before {
+            background-size: 50%;
+        }
+    }
+
+    @@media (max-width: 800px) {
+        body::before {
+            background-size: 60%;
+        }
+    }
+
+    .bold-line th {
+        border-bottom: 3px solid black;
+    }
+
+    .bold-text {
+        font-weight: bold;
+        border-bottom: 3px solid black;
+    }
+</style>
+
 <h3>Доступні Самокати для прокату</h3>
 @if (scooters == null)
 {
@@ -30,7 +69,7 @@ else
             @foreach (var scooter in availableScooters)
             {
                 <tr>
-                    <td class="bold-text">@scooter.Id</td>
+                    <td class="bold-text">@scooter.Id.ToString().Substring(0, 4)</td>
                     <td class="bold-text">@scooter.Model</td>
                     <td class="bold-text">@(scooter.Status ? "Доступно" : "Недоступно")</td>
                     <td class="bold-text">
@@ -73,33 +112,33 @@ else
     {
         try
         {
-            var clientId = await LocalStorage.GetItemAsync<Guid>("clientId");
+            var clientId = await SessionStorage.GetItemAsync<Guid>("clientId");
 
             var response = await HttpClient.PostAsJsonAsync($"StartSession?clientId={clientId}&scooterId={id}", new { clientId, scooterId = id });
 
             if (response.IsSuccessStatusCode)
             {
-                var responseData = await response.Content.ReadFromJsonAsync<ResponseModel>(); 
+                var responseData = await response.Content.ReadFromJsonAsync<Guid>(); 
 
-                if (responseData != null && responseData.SessionId != Guid.Empty)
+                if (responseData != null && responseData != Guid.Empty)
                 {
 
-                    var sesId = await LocalStorage.GetItemAsync<List<Guid>>("SessionIds");
+                    var sesId = await SessionStorage.GetItemAsync<List<Guid>>("SessionIds");
 
                     if (sesId != null)
                     {
-                        sesId.Add(responseData.SessionId); 
+                        sesId.Add(responseData); 
                     }
                     else
                     {
-                        sesId = new List<Guid> { responseData.SessionId }; 
+                        sesId = new List<Guid> { responseData }; 
                     }
 
-                    await LocalStorage.SetItemAsync("SessionIds", sesId);
+                    await SessionStorage.SetItemAsync("SessionIds", sesId);
 
                     sessionId = sesId;
 
-                    Console.WriteLine($"Successfully ordered scooter with id {responseData.SessionId}");
+                    Console.WriteLine($"Successfully ordered scooter with id {responseData}");
                     StateHasChanged();
                 }
                 else

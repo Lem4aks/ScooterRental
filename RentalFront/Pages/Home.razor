@@ -1,5 +1,5 @@
 ﻿@page "/"
-@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 
 <div class="p-4">
     <div class="container">
@@ -10,6 +10,6 @@
     private string curName;
     protected override async Task OnInitializedAsync()
     {
-        curName = await LocalStorage.GetItemAsync<string>("curName");
+        curName = await SessionStorage.GetItemAsync<string>("curName");
     }
 }
