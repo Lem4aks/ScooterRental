@@ -4,8 +4,6 @@
 @using RentalFront.Models
 @inject HttpClient HttpClient
 
-<h3>Доступні Самокати для прокату</h3>
-
 <style>
     body::before {
         content: "";
@@ -42,7 +40,20 @@
         font-weight: bold;
         border-bottom: 3px solid black;
     }
+
+    .header-container {
+        display: flex;
+        align-items: center;
+    }
+
+        .header-container .btn {
+            margin-right: 10px;
+        }
 </style>
+<div class="header-container">
+    <button class="btn btn-primary" @onclick="RefreshData">Оновити</button>
+    <h3>Самокати для прокату</h3>
+</div>
 @if (scooters == null)
 {
     <p>Завнтаження...</p>
@@ -64,7 +75,7 @@ else
                 <tr>
                     <td class="bold-text">@scooter.Id</td>
                     <td class="bold-text">@scooter.Model</td>
-                    <td class="bold-text">@(scooter.Status ? "Доступно" : "Недоступно")</td>
+                    <td class="bold-text">@(scooter.Status ? "Доступні" : "Недоступні")</td>
                     <td class="bold-text">
                         <button class="btn btn-danger ml-2" @onclick="() => RemoveScooter(scooter.Id)">Видалити</button>
                     </td>
@@ -90,7 +101,10 @@ else
     {
         await LoadScooters();
     }
-
+    private async Task RefreshData()
+    {
+        await LoadScooters();
+    }
     private async Task LoadScooters()
     {
         try
