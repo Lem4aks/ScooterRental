@@ -62,14 +62,6 @@ else
             {
                 <tr>
                     <td class="bold-text">@rental.StartTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                    @if (@rental.ScooterModel != null)
-                        {
-                            @rental.ScooterModel.ToString();
-                        }
-                        else
-                        {
-                            <span>Пусто</span>
-                        }
                     <td class="bold-text">@rental.ScooterModel</td>
                     <td class="bold-text">
                         @if (rental.EndTime != null)
@@ -103,7 +95,7 @@ else
     private bool isLoading = true;
     public int cout;
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         await LoadScooters();
     }
@@ -129,6 +121,7 @@ else
                 {
                     rentals = result;
                     sortedRentals = rentals.OrderBy(r => r.EndTime == null ? DateTime.MinValue : r.StartTime).ToList();
+                    StateHasChanged();
                 }
             }
             else
@@ -142,6 +135,7 @@ else
         }
         finally
         {
+            StateHasChanged();
             isLoading = false;
         }
     }
@@ -156,6 +150,7 @@ else
             {
                 var rental = rentals.FirstOrDefault(r => r.Id == rentalId);
                 Console.WriteLine($"Successfully ended session with id {rentalId}");
+                StateHasChanged();
                 await LoadScooters();
             }
             else
@@ -178,6 +173,4 @@ else
         public DateTime? EndTime { get; set; }
         public decimal RentalCost { get; set; }
     }
-
-     
 }

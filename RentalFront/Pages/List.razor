@@ -83,7 +83,7 @@ else
     private string newScooterModel;
     private List<Guid> sessionId = new List<Guid>();
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         await LoadScooters();
     }

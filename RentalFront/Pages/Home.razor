@@ -4,12 +4,34 @@
 <div class="p-4">
     <div class="container">
         <h1>Привіт @curName</h1>
+        @if (currentSession != null)
+        {
+            <div>
+                <p>Триває сесія: @currentSession.StartTime.ToString("yyyy-MM-dd HH:mm:ss")</p>
+                <p>Модель скутера: @currentSession.ScooterModel</p>
+            </div>
+        }
+        else
+        {
+            <p>Немає активної сесії.</p>
+        }
     </div>
 </div>
+
 @code {
     private string curName;
+    private Session currentSession;
+
     protected override async Task OnInitializedAsync()
     {
         curName = await LocalStorage.GetItemAsync<string>("curName");
+        currentSession = await LocalStorage.GetItemAsync<Session>("currentSession");
+    }
+
+    public class Session
+    {
+        public DateTime StartTime { get; set; }
+        public string ScooterModel { get; set; }
+        public Guid SessionId { get; set; }
     }
 }
