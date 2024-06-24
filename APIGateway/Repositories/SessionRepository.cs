@@ -45,7 +45,7 @@ namespace APIGateway.Repositories
 
             if (!response.IsSuccess)
             {
-                throw new Exception("Error starting session");
+                return Guid.Empty;
             }
 
             return Guid.Parse(response.SessionId);

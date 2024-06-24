@@ -1,9 +1,10 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @using System.Net.Http.Headers;
+@using RentalFront.Models
 @inject HttpClient HttpClient
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
-@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 
 @if (isAuthenticated)
 {
@@ -40,14 +41,13 @@ else if (notregister)
                 <EditForm Model="@loginUser" OnValidSubmit="LoginUserAsync">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
-
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Пароль:</label>
-                        <InputText id="password" type="password" class="form-control" @bind-Value="loginUser.Password" />
-                    </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Пошта:</label>
                         <InputText id="email" class="form-control" @bind-Value="loginUser.Email" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Пароль:</label>
+                        <InputText id="password" type="password" class="form-control" @bind-Value="loginUser.Password" />
                     </div>
                     <div class="mb-3">
                         <button type="submit" class="btn btn-primary w-100">Авторизація</button>
@@ -129,8 +129,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        curName = await LocalStorage.GetItemAsync<string>("curName");
-        var token = await LocalStorage.GetItemAsync<string>("token");
+        curName = await SessionStorage.GetItemAsync<string>("curName");
+        var token = await SessionStorage.GetItemAsync<string>("token");
 
         if (!string.IsNullOrEmpty(token))
         {
@@ -139,7 +139,7 @@ else
 
         isAuthenticated = !string.IsNullOrEmpty(curName);
         {
-            Console.WriteLine($"$Successfully ordered scooter with id {await LocalStorage.GetItemAsync<Guid>("clientId")}");
+            Console.WriteLine($"$Successfully ordered scooter with id {await SessionStorage.GetItemAsync<Guid>("clientId")}");
         }
     }
 
@@ -160,10 +160,10 @@ else
         {
             var clientDto = await response.Content.ReadFromJsonAsync<ClientDto>();
             curName = clientDto.userName;
-            await LocalStorage.SetItemAsync("curName", curName);
-            await LocalStorage.SetItemAsync("token", clientDto.Token);
-            await LocalStorage.SetItemAsync("clientId", clientDto.Id);
-            await LocalStorage.SetItemAsync("SessionIds", clientDto.SessionIds);
+            await SessionStorage.SetItemAsync("curName", curName);
+            await SessionStorage.SetItemAsync("token", clientDto.Token);
+            await SessionStorage.SetItemAsync("clientId", clientDto.Id);
+            await SessionStorage.SetItemAsync("SessionIds", clientDto.SessionIds);
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", clientDto.Token);
             isAuthenticated = true;
         }
@@ -190,20 +190,6 @@ else
     private async Task Logout()
     {
         isAuthenticated = false;
-        await LocalStorage.ClearAsync();
-    }
-
-    public class ClientDto
-    {
-        public Guid Id { get; set; }
-        public string Token { get; set; }
-        public string userName { get; set; }
-        public List<Guid> SessionIds { get; set; }
-    }
-    public class SessionDto
-    {
-        public DateTime StartTime { get; set; }
-        public DateTime? EndTime { get; set; }
-        public decimal RentalCost { get; set; }
+        await SessionStorage.ClearAsync();
     }
 }

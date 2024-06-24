@@ -2,9 +2,11 @@
 @using System.Net.Http
 @using System.Net.Http.Json
 @using System.Text.Json
+@using RentalFront.Models
 @inject HttpClient HttpClient
 @inject NavigationManager Navigation
-@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+
 <style>
     body::before {
         content: "";
@@ -32,6 +34,7 @@
             background-size: 60%;
         }
     }
+
     .bold-line th {
         border-bottom: 3px solid black;
     }
@@ -41,6 +44,7 @@
         border-bottom: 3px solid black;
     }
 </style>
+
 <h3>Доступні Самокати для прокату</h3>
 @if (scooters == null)
 {
@@ -65,7 +69,7 @@ else
             @foreach (var scooter in availableScooters)
             {
                 <tr>
-                    <td class="bold-text">@scooter.Id</td>
+                    <td class="bold-text">@scooter.Id.ToString().Substring(0, 4)</td>
                     <td class="bold-text">@scooter.Model</td>
                     <td class="bold-text">@(scooter.Status ? "Доступно" : "Недоступно")</td>
                     <td class="bold-text">
@@ -106,30 +110,42 @@ else
 
     private async Task OrderScooter(Guid id)
     {
-
         try
         {
-            var clientId = await LocalStorage.GetItemAsync<Guid>("clientId");
+            var clientId = await SessionStorage.GetItemAsync<Guid>("clientId");
 
             var response = await HttpClient.PostAsJsonAsync($"StartSession?clientId={clientId}&scooterId={id}", new { clientId, scooterId = id });
 
             if (response.IsSuccessStatusCode)
             {
-                    var sesId = await LocalStorage.GetItemAsync<List<Guid>>("SessionIds");
+                var responseData = await response.Content.ReadFromJsonAsync<Guid>(); 
+
+                if (responseData != null && responseData != Guid.Empty)
+                {
+
+                    var sesId = await SessionStorage.GetItemAsync<List<Guid>>("SessionIds");
 
                     if (sesId != null)
                     {
-                        await LocalStorage.SetItemAsync("rentalIds", sesId);
-                        sessionId = sesId;
+                        sesId.Add(responseData); 
                     }
                     else
                     {
-                        sessionId = new List<Guid>();
+                        sesId = new List<Guid> { responseData }; 
                     }
 
-                Console.WriteLine($"Successfully ordered scooter with id {sessionId}");
+                    await SessionStorage.SetItemAsync("SessionIds", sesId);
+
+                    sessionId = sesId;
+
+                    Console.WriteLine($"Successfully ordered scooter with id {responseData}");
                     StateHasChanged();
                 }
+                else
+                {
+                    Console.WriteLine("Failed to get a valid session ID from the response.");
+                }
+            }
             else
             {
                 var errorMessage = await response.Content.ReadAsStringAsync();
@@ -144,25 +160,5 @@ else
         {
             await LoadScooters();
         }
-    }
-
-    public class Scooter
-    {
-        public Guid Id { get; set; }
-        public string Model { get; set; }
-        public bool Status { get; set; }
-        public List<Guid> SessionIds { get; set; } = new List<Guid>();
-    }
-    public class Client
-    {
-        public List<Guid> SessionIds { get; set; }
-    }
-    public class Rental
-    {
-        public Guid Id { get; set; }
-        public string? ScooterModel { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime? EndTime { get; set; }
-        public decimal RentalCost { get; set; }
     }
 }

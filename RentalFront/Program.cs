@@ -1,6 +1,7 @@
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Blazored.SessionStorage;
 using static RentalFront.Layout.MainLayout;
 
 namespace RentalFront
@@ -14,6 +15,7 @@ namespace RentalFront
             builder.RootComponents.Add<HeadOutlet>("head::after");
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7029/") });
             builder.Services.AddBlazoredLocalStorage();
+            builder.Services.AddBlazoredSessionStorage();
             await builder.Build().RunAsync();
         }
     }

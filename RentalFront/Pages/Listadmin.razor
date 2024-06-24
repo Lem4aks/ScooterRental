@@ -1,9 +1,11 @@
 ﻿@page "/Listadmin"
 @using System.Net.Http
 @using System.Net.Http.Json
+@using RentalFront.Models
 @inject HttpClient HttpClient
 
 <h3>Доступні Самокати для прокату</h3>
+
 <style>
     body::before {
         content: "";
@@ -31,9 +33,11 @@
             background-size: 60%;
         }
     }
+
     .bold-line th {
         border-bottom: 3px solid black;
     }
+
     .bold-text {
         font-weight: bold;
         border-bottom: 3px solid black;
@@ -131,13 +135,5 @@ else
         {
             Console.WriteLine($"Error adding scooter: {ex.Message}");
         }
-    }
-
-    public class Scooter
-    {
-        public Guid Id { get; set; }
-        public string Model { get; set; }
-        public bool Status { get; set; }
-        public List<Guid> SessionIds { get; set; } = new List<Guid>();
     }
 }

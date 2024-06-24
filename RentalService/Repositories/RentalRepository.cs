@@ -33,8 +33,15 @@ namespace RentalService.Repositories
                 throw new SessionNotFoundException($"No session found with ID: {id}");
             }
         }
+        public async Task<bool> HasUnfinishedSession(Guid clientId)
+        {
+            bool hasUnfinishedSessions = _context.Sessions
+                    .Any(s => s.ClientId == clientId && s.EndTime == null);
 
-        public async Task<Session> StartSession(Guid clientId, Guid scooterId) 
+            return hasUnfinishedSessions;
+        }
+
+        public async Task<Guid> StartSession(Guid clientId, Guid scooterId) 
         {
             DateTimeOffset startTime = DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(3));
 
@@ -45,7 +52,7 @@ namespace RentalService.Repositories
             await _context.Sessions.AddAsync(sessionEntity);
             await _context.SaveChangesAsync();
 
-            return session;
+            return session.Id;
         }
 
         public async Task<Session> EndSession(Guid sessionId)
